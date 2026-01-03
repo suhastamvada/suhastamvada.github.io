@@ -83,9 +83,9 @@ Senior Design: Design and analysis of guide rods of an automotive head restraint
 
 ## Media Coverage
 
-- [Invited talk - Engineering a Global Path: Insights from Dr. Suhas Rao Tamvada](https://alumni.srivishnu.edu.in/newsroom/news/Engineering-a-Global-Path-Insights-from-Dr-Suhas-Rao-Tamvada)
-- B. Crosbie, [Grad student Suhas Tamvada achieves influential discovery in heat transfer.](https://mae.ufl.edu/2023/03/23/grad-student-suhas-tamvada-achieves-influential-discovery-in-heat-transfer/) **MAE UF** (Mar 2023)  
-- D. Staudacher, [Researchers looking at oil and water interaction to prevent water contamination.](https://mie.uic.edu/news-stories/researchers-looking-at-oil-and-water-interaction-to-prevent-water-contamination/) **MIE UIC** (Apr 2021)
+- [Invited talk - Engineering a Global Path: Insights from Dr. Suhas Rao Tamvada](https://alumni.srivishnu.edu.in/newsroom/news/Engineering-a-Global-Path-Insights-from-Dr-Suhas-Rao-Tamvada) **Vishnu Educational Society** (Aug 2025).
+- B. Crosbie, [Grad student Suhas Tamvada achieves influential discovery in heat transfer.](https://mae.ufl.edu/2023/03/23/grad-student-suhas-tamvada-achieves-influential-discovery-in-heat-transfer/) **MAE UF** (Mar 2023).  
+- D. Staudacher, [Researchers looking at oil and water interaction to prevent water contamination.](https://mie.uic.edu/news-stories/researchers-looking-at-oil-and-water-interaction-to-prevent-water-contamination/) **MIE UIC** (Apr 2021).
 
 ---
 
