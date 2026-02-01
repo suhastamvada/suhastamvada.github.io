@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script> <!-- Lightweight CDN for Markdown parsing -->
+</head>
+<body>
+    <header>
+        <h1>Article</h1>
+        <a href="index.html">Back to Home</a>
+    </header>
+    
+    <main id="content">
+        <p>Loading article...</p>
+    </main>
+    
+    <script>
+        // Get file from URL query param (e.g., ?file=article1.md)
+        const urlParams = new URLSearchParams(window.location.search);
+        const file = urlParams.get('file');
+        
+        if (file) {
+            fetch(`assets/${file}`)
+                .then(response => response.text())
+                .then(text => {
+                    document.getElementById('content').innerHTML = marked.parse(text);
+                })
+                .catch(error => {
+                    document.getElementById('content').innerHTML = '<p>Error loading article.</p>';
+                    console.error(error);
+                });
+        } else {
+            document.getElementById('content').innerHTML = '<p>No article specified.</p>';
+        }
+    </script>
+    
+    <footer>
+        <p>&copy; 2026 Suhas Rao Tamvada</p>
+    </footer>
+</body>
+</html>

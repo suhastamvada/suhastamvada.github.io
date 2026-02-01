@@ -1,0 +1,48 @@
+/* Minimalistic, fast-loading CSS */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* System fonts for speed; customize here */
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+    color: #333;
+    background: #fff;
+}
+
+header, section, footer {
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    font-weight: normal; /* Keep light for minimalism */
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+iframe {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Add media queries for responsiveness if needed */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+}
