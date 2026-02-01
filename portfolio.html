@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Suhas Rao Tamvada</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script> <!-- For Markdown parsing -->
 </head>
 <body>
     <header>
@@ -14,10 +15,23 @@
     
     <section>
         <h2>Resume</h2>
-        <!-- Embed PDF resume -->
-        <iframe src="assets/resume.pdf" width="100%" height="800px" style="border: none;"></iframe>
-        <!-- Or, if using Markdown resume: <div id="content"></div> and add JS like in article.html -->
+        <main id="content">
+            <p>Loading resume...</p>
+        </main>
     </section>
+    
+    <script>
+        // Load and render resume.md
+        fetch('assets/resume.md')
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('content').innerHTML = marked.parse(text);
+            })
+            .catch(error => {
+                document.getElementById('content').innerHTML = '<p>Error loading resume.</p>';
+                console.error(error);
+            });
+    </script>
     
     <footer>
         <p>&copy; 2026 Suhas Rao Tamvada</p>
