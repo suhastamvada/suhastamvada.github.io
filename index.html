@@ -4,30 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suhas Tamvada</title>
+    <meta name="description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Personal Portfolio</h1>
-        <p></p>
-    </header>
-    
     <nav>
-        <a href="portfolio.html">View Portfolio & Resume</a>
+        <div class="nav-inner">
+            <a href="/" class="site-name">Suhas Tamvada</a>
+            <ul class="nav-links">
+                <li><a href="/" class="active">Blog</a></li>
+                <li><a href="portfolio.html">About</a></li>
+            </ul>
+        </div>
     </nav>
-    
-    <section>
-        <h2>Articles</h2>
-        <ul>
-            <p>You will find articles here.</p>
-            <!-- <li><a href="article.html?file=article1.md">Article 1: Sample Topic</a></li>
-            <li><a href="article.html?file=article2.md">Article 2: Another Topic</a></li>
-            Add new links here when pushing new .md files -->
+
+    <main>
+        <div class="page-header">
+            <h1>Writing</h1>
+            <p class="subtitle">Thoughts on thermal science, engineering, and everything in between.</p>
+        </div>
+
+        <ul class="post-list" id="post-list">
+            <li class="loading">Loading posts...</li>
         </ul>
-    </section>
-    
+    </main>
+
     <footer>
         <p>&copy; 2026 Suhas Rao Tamvada</p>
     </footer>
+
+    <script src="js/app.js"></script>
 </body>
 </html>

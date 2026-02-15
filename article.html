@@ -3,42 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article</title>
+    <title>Article — Suhas Tamvada</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script> <!-- Lightweight CDN for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Article</h1>
-        <a href="index.html">Back to Home</a>
-    </header>
-    
-    <main id="content">
-        <p>Loading article...</p>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="site-name">Suhas Tamvada</a>
+            <ul class="nav-links">
+                <li><a href="/">Blog</a></li>
+                <li><a href="portfolio.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <a href="/" class="back-link">&larr; Back to all posts</a>
+
+        <article>
+            <div class="article-header" id="article-header" style="display:none;">
+                <h1 id="article-title"></h1>
+                <p class="article-meta" id="article-meta"></p>
+            </div>
+            <div class="article-content" id="content">
+                <p class="loading">Loading article...</p>
+            </div>
+        </article>
     </main>
-    
-    <script>
-        // Get file from URL query param (e.g., ?file=article1.md)
-        const urlParams = new URLSearchParams(window.location.search);
-        const file = urlParams.get('file');
-        
-        if (file) {
-            fetch(`assets/${file}`)
-                .then(response => response.text())
-                .then(text => {
-                    document.getElementById('content').innerHTML = marked.parse(text);
-                })
-                .catch(error => {
-                    document.getElementById('content').innerHTML = '<p>Error loading article.</p>';
-                    console.error(error);
-                });
-        } else {
-            document.getElementById('content').innerHTML = '<p>No article specified.</p>';
-        }
-    </script>
-    
+
     <footer>
         <p>&copy; 2026 Suhas Rao Tamvada</p>
     </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const file = urlParams.get('file');
+
+        if (file) {
+            // Fetch post metadata for title and date
+            fetch('assets/posts.json')
+                .then(r => r.json())
+                .then(posts => {
+                    const slug = file.replace('.md', '');
+                    const post = posts.find(p => p.slug === slug);
+                    if (post) {
+                        document.getElementById('article-title').textContent = post.title;
+                        const date = new Date(post.date + 'T00:00:00');
+                        const formatted = date.toLocaleDateString('en-US', {
+                            year: 'numeric', month: 'long', day: 'numeric'
+                        });
+                        document.getElementById('article-meta').textContent = formatted;
+                        document.getElementById('article-header').style.display = 'block';
+                        document.title = post.title + ' — Suhas Tamvada';
+                    }
+                })
+                .catch(() => {});
+
+            // Fetch and render markdown
+            fetch(`assets/${file}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Not found');
+                    return response.text();
+                })
+                .then(text => {
+                    // Strip the first H1 if it matches the title (avoid duplication)
+                    const stripped = text.replace(/^#\s+.+\n*/m, '');
+                    document.getElementById('content').innerHTML = marked.parse(stripped);
+                })
+                .catch(() => {
+                    document.getElementById('content').innerHTML =
+                        '<p class="empty-state">Article not found.</p>';
+                });
+        } else {
+            document.getElementById('content').innerHTML =
+                '<p class="empty-state">No article specified.</p>';
+        }
+    </script>
 </body>
 </html>

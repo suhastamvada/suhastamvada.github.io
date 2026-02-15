@@ -3,38 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Suhas Rao Tamvada</title>
+    <title>About — Suhas Tamvada</title>
+    <meta name="description" content="Suhas Rao Tamvada — Mechanical engineer at Tesla. PhD in thermal science. Building what's next.">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script> <!-- For Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>My Portfolio</h1>
-        <a href="index.html">Back to Home</a>
-    </header>
-    
-    <section>
-        <h2>Resume</h2>
-        <main id="content">
-            <p>Loading resume...</p>
-        </main>
-    </section>
-    
-    <script>
-        // Load and render resume.md
-        fetch('assets/resume.md')
-            .then(response => response.text())
-            .then(text => {
-                document.getElementById('content').innerHTML = marked.parse(text);
-            })
-            .catch(error => {
-                document.getElementById('content').innerHTML = '<p>Error loading resume.</p>';
-                console.error(error);
-            });
-    </script>
-    
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="site-name">Suhas Tamvada</a>
+            <ul class="nav-links">
+                <li><a href="/">Blog</a></li>
+                <li><a href="portfolio.html" class="active">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="profile-header">
+            <img src="assets/img/prof_pic.jpg" alt="Suhas Rao Tamvada">
+            <h1>Suhas Rao Tamvada</h1>
+            <p class="tagline">Mechanical Engineer at Tesla &middot; PhD in Thermal Science</p>
+        </div>
+
+        <div class="article-content" id="content">
+            <p class="loading">Loading...</p>
+        </div>
+    </main>
+
     <footer>
         <p>&copy; 2026 Suhas Rao Tamvada</p>
     </footer>
+
+    <script>
+        marked.setOptions({ breaks: false, gfm: true });
+
+        fetch('assets/resume.md')
+            .then(response => {
+                if (!response.ok) throw new Error('Not found');
+                return response.text();
+            })
+            .then(text => {
+                document.getElementById('content').innerHTML = marked.parse(text);
+            })
+            .catch(() => {
+                document.getElementById('content').innerHTML =
+                    '<p class="empty-state">Error loading content.</p>';
+            });
+    </script>
 </body>
 </html>
