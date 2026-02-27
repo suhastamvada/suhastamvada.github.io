@@ -1,6 +1,7 @@
-# Hello, World
+# Professional FAQ
 
-I've been meaning to start writing for a while now. Not the kind of writing I'm used to — journal papers dense with equations, conference abstracts squeezed into word limits, or thesis chapters reviewed by committee. Something looser. Something closer to how I actually think.
+I have recently been receiving a lot of requests from young professionals asking me a list fairly repetitive questions - 
+- 
 
 So here we are.
 

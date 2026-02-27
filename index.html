@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suhas Tamvada</title>
     <meta name="description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Suhas Tamvada — Blog">
+    <meta property="og:description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tamvada.me/">
+    <meta property="og:image" content="https://tamvada.me/assets/img/prof_pic.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Suhas Tamvada — Blog">
+    <meta name="twitter:description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+
+    <!-- RSS Autodiscovery -->
+    <link rel="alternate" type="application/rss+xml" title="Suhas Tamvada" href="/feed.xml">
+
+    <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,7 +38,9 @@
             <a href="/" class="site-name">Suhas Tamvada</a>
             <ul class="nav-links">
                 <li><a href="/" class="active">Blog</a></li>
+                <li><a href="projects.html">Projects</a></li>
                 <li><a href="portfolio.html">About</a></li>
+                <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button></li>
             </ul>
         </div>
     </nav>
@@ -34,5 +61,22 @@
     </footer>
 
     <script src="js/app.js"></script>
+    <script>
+      (function() {
+        var btn = document.getElementById('theme-toggle');
+        function updateIcon() {
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          btn.textContent = isDark ? '\u2600' : '\u263E';
+        }
+        updateIcon();
+        btn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          var next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          updateIcon();
+        });
+      })();
+    </script>
 </body>
 </html>

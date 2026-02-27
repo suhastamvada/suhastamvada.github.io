@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Suhas Tamvada</title>
+    <meta name="description" content="Engineering projects by Suhas Tamvada — CFD simulations, iOS apps, and web experiments.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Projects — Suhas Tamvada">
+    <meta property="og:description" content="Engineering projects by Suhas Tamvada — CFD simulations, iOS apps, and web experiments.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tamvada.me/projects.html">
+    <meta property="og:image" content="https://tamvada.me/assets/img/prof_pic.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Projects — Suhas Tamvada">
+    <meta name="twitter:description" content="Engineering projects by Suhas Tamvada — CFD simulations, iOS apps, and web experiments.">
+
+    <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="site-name">Suhas Tamvada</a>
+            <ul class="nav-links">
+                <li><a href="/">Blog</a></li>
+                <li><a href="projects.html" class="active">Projects</a></li>
+                <li><a href="portfolio.html">About</a></li>
+                <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="wide-main">
+        <div class="page-header">
+            <h1>Projects</h1>
+            <p class="subtitle">Things I've built and am building.</p>
+        </div>
+
+        <div class="project-grid" id="project-grid">
+            <p class="loading">Loading projects...</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Suhas Rao Tamvada</p>
+    </footer>
+
+    <script>
+      (function() {
+        var grid = document.getElementById('project-grid');
+
+        fetch('assets/projects.json')
+          .then(function(r) {
+            if (!r.ok) throw new Error('Failed to load');
+            return r.json();
+          })
+          .then(function(projects) {
+            if (!projects || projects.length === 0) {
+              grid.innerHTML = '<p class="empty-state">No projects yet.</p>';
+              return;
+            }
+
+            grid.innerHTML = projects.map(function(p) {
+              var imageHtml = p.image
+                ? '<div class="project-card-image"><img src="' + p.image + '" alt="' + p.name + '"></div>'
+                : '';
+
+              var techHtml = p.tech.map(function(t) {
+                return '<span class="tech-tag">' + t + '</span>';
+              }).join('');
+
+              var linksHtml = '';
+              if (p.github) {
+                linksHtml += '<a href="' + p.github + '" class="project-link" target="_blank" rel="noopener">GitHub</a>';
+              }
+              if (p.url) {
+                linksHtml += '<a href="' + p.url + '" class="project-link" target="_blank" rel="noopener">Live Site</a>';
+              }
+
+              return '<div class="project-card">' +
+                imageHtml +
+                '<div class="project-card-body">' +
+                  '<h2 class="project-card-title">' + p.name + '</h2>' +
+                  '<p class="project-card-desc">' + p.description + '</p>' +
+                  '<div class="project-card-tech">' + techHtml + '</div>' +
+                  '<div class="project-card-links">' + linksHtml + '</div>' +
+                '</div>' +
+              '</div>';
+            }).join('');
+          })
+          .catch(function() {
+            grid.innerHTML = '<p class="empty-state">Could not load projects.</p>';
+          });
+      })();
+    </script>
+    <script>
+      (function() {
+        var btn = document.getElementById('theme-toggle');
+        function updateIcon() {
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          btn.textContent = isDark ? '\u2600' : '\u263E';
+        }
+        updateIcon();
+        btn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          var next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          updateIcon();
+        });
+      })();
+    </script>
+</body>
+</html>

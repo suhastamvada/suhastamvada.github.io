@@ -4,8 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article — Suhas Tamvada</title>
+    <meta name="description" content="An article by Suhas Tamvada on thermal science, engineering, and the journey from lab to product.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Article — Suhas Tamvada">
+    <meta property="og:description" content="An article by Suhas Tamvada on thermal science, engineering, and the journey from lab to product.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://tamvada.me/article.html">
+    <meta property="og:image" content="https://tamvada.me/assets/img/prof_pic.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Article — Suhas Tamvada">
+    <meta name="twitter:description" content="An article by Suhas Tamvada on thermal science, engineering, and the journey from lab to product.">
+
+    <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Prism.js syntax highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-c.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-swift.min.js"></script>
 </head>
 <body>
     <nav>
@@ -13,7 +45,9 @@
             <a href="/" class="site-name">Suhas Tamvada</a>
             <ul class="nav-links">
                 <li><a href="/">Blog</a></li>
+                <li><a href="projects.html">Projects</a></li>
                 <li><a href="portfolio.html">About</a></li>
+                <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button></li>
             </ul>
         </div>
     </nav>
@@ -70,6 +104,8 @@
                     // Strip the first H1 if it matches the title (avoid duplication)
                     const stripped = text.replace(/^#\s+.+\n*/m, '');
                     document.getElementById('content').innerHTML = marked.parse(stripped);
+                    // Highlight code blocks with Prism
+                    Prism.highlightAll();
                 })
                 .catch(() => {
                     document.getElementById('content').innerHTML =
@@ -79,6 +115,23 @@
             document.getElementById('content').innerHTML =
                 '<p class="empty-state">No article specified.</p>';
         }
+    </script>
+    <script>
+      (function() {
+        var btn = document.getElementById('theme-toggle');
+        function updateIcon() {
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          btn.textContent = isDark ? '\u2600' : '\u263E';
+        }
+        updateIcon();
+        btn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          var next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          updateIcon();
+        });
+      })();
     </script>
 </body>
 </html>
