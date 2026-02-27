@@ -6,10 +6,10 @@
     <description>Thoughts on thermal science, engineering, and everything in between.</description>
     <atom:link href="https://tamvada.me/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>Hello, World</title>
-      <link>https://tamvada.me/article.html?file=hello-world.md</link>
-      <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
-      <description>Welcome to my corner of the internet.</description>
+      <title>Career FAQ</title>
+      <link>https://tamvada.me/article.html?file=career-faq.md</link>
+      <pubDate>Fri, 27 Feb 2026 00:00:00 GMT</pubDate>
+      <description>What it takes to land a mechanical engineering job at Tesla and in the industry — first principles thinking, hands-on experience, and the skills that actually matter.</description>
     </item>
   </channel>
 </rss>
