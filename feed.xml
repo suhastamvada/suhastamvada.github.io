@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Suhas Tamvada</title>
+    <link>https://tamvada.me</link>
+    <description>Thoughts on thermal science, engineering, and everything in between.</description>
+    <atom:link href="https://tamvada.me/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Career FAQ</title>
+      <link>https://tamvada.me/article.html?file=career-faq.md</link>
+      <pubDate>Fri, 27 Feb 2026 00:00:00 GMT</pubDate>
+      <description>What it takes to land a mechanical engineering job at Tesla and in the industry — first principles thinking, hands-on experience, and the skills that actually matter.</description>
+    </item>
+  </channel>
+</rss>

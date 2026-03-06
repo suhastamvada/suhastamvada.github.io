@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Drop Coalescence Simulation",
+    "description": "Axisymmetric VOF simulation of water drop coalescence into a flat pool, studying spreading behavior and energy budgets. Built on the Basilisk CFD framework with adaptive mesh refinement.",
+    "tech": ["C", "Basilisk CFD", "Python"],
+    "github": "https://github.com/suhastamvada/drop_coalescence",
+    "image": "assets/img/Drops_yin_yang.jpg"
+  },
+  {
+    "name": "FollowMe",
+    "description": "iOS app for real-time person tracking with BLE servo control. Uses on-device ML via Apple Vision to detect and follow a speaker, driving a physical pan stage for automated camera tracking.",
+    "tech": ["Swift", "SwiftUI", "Vision", "CoreBluetooth", "Arduino"],
+    "github": "https://github.com/suhastamvada/FollowMe"
+  },
+  {
+    "name": "Memento Mori",
+    "description": "Philosophical web app visualizing your lifespan as a grid of weeks. A perspective tool for reflecting on how you spend your time.",
+    "tech": ["JavaScript", "HTML/CSS"],
+    "url": "https://suhastamvada.com",
+    "github": "https://github.com/suhastamvada/weeks-life"
+  }
+]
