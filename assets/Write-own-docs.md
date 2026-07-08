@@ -1,0 +1,11 @@
+# Write original content
+
+My favorite form of content consumption is reading. I tend to watch videos and listen to podcasts here and there, but I enjoy reading the most. Lately, I have been thinking about what kind of material I like to read, and what I gravitate towards. I am not talking about the content of the material as much as I am referring to the style of writing.
+
+These thoughts have come up in the context of me realizing that I am quickly able to distinguish between original writing and AI generated content. It is hard to point to the exact differences, but AI writing seems distant to me, as if it is devoid of the kind of warmth that only a human can infuse into words. I like writing that is conversational and personal. This, by the way, is in no way a novel idea. Many accomplished individuals have written about writing. Paul Graham's writing comes to mind in this moment - [Paul Graham on good writing](https://www.paulgraham.com/goodwriting.html).
+
+Nevertheless, I wanted to remind myself on how important it is to be able to convey ideas and thoughts in the form of writing. Writing forces one to think through their ideas and condense them into their most compact form. If you are anything like me, you probably notice good writing as well. Writing where not a single word is wasted. Writing where the sentences are just the right length, agnostic to rules about the length of sentences. Writing which instantly connects you to the mind of the writer, as if navigating through their mind when reading their work.
+
+Good writing is also short. Writing the same thing in multiple ways isn't really effective. This is another reason AI writing seems unnatural. Another reason I am writing this is because it is increasingly becoming harder to find human written content. I increasingly come across AI written content and it simply does not have the same effect on me. Original human content will become increasingly rare in the future, and being able to write well will start to look like a superpower. Compelling writing will become a coveted skill.
+
+This is a reminder to own your thought process.
