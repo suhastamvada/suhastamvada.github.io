@@ -75,16 +75,5 @@
       { "label": "J. Colloid & Interface Science 2021 (arXiv)", "url": "https://arxiv.org/abs/2101.00293" }
     ],
     "image": "assets/img/JCIS_spreading.jpg"
-  },
-  {
-    "id": "memento-mori",
-    "name": "Memento Mori",
-    "group": "Misc",
-    "year": "2025",
-    "sortYear": 2025,
-    "description": "A philosophical web app that renders your lifespan as a grid of weeks — a quiet tool for reflecting on how you spend your time.",
-    "tech": ["JavaScript", "HTML/CSS"],
-    "url": "https://tamvada.me/mementomori/",
-    "github": "https://github.com/suhastamvada/weeks-life"
   }
 ]

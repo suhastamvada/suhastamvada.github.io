@@ -376,6 +376,11 @@ main.wide-main {
 }
 
 /* Research image grid */
+.about-intro {
+  max-width: var(--content-width);
+  margin: 0 auto 3rem;
+}
+
 .article-content .research-img {
   margin: 2rem auto;
   max-width: 100%;

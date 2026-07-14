@@ -12,11 +12,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About — Suhas Tamvada</title>
-    <meta name="description" content="Suhas Rao Tamvada — Mechanical engineer at Tesla. PhD in thermal science. Building what's next.">
+    <meta name="description" content="Suhas Tamvada — engineer with a background in thermal and fluid sciences. Interested in machine learning, nuclear energy, and quantum computing.">
 
     <!-- Open Graph -->
     <meta property="og:title" content="About — Suhas Tamvada">
-    <meta property="og:description" content="Suhas Rao Tamvada — Mechanical engineer at Tesla. PhD in thermal science. Building what's next.">
+    <meta property="og:description" content="Suhas Tamvada — engineer with a background in thermal and fluid sciences. Interested in machine learning, nuclear energy, and quantum computing.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tamvada.me/portfolio.html">
     <meta property="og:image" content="https://tamvada.me/assets/img/prof_pic.jpg">
@@ -24,7 +24,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="About — Suhas Tamvada">
-    <meta name="twitter:description" content="Suhas Rao Tamvada — Mechanical engineer at Tesla. PhD in thermal science. Building what's next.">
+    <meta name="twitter:description" content="Suhas Tamvada — engineer with a background in thermal and fluid sciences. Interested in machine learning, nuclear energy, and quantum computing.">
 
     <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
     <script>
@@ -44,27 +44,30 @@
             <a href="/" class="site-name">Suhas Tamvada</a>
             <ul class="nav-links">
                 <li><a href="/">Blog</a></li>
-                <li><a href="projects.html">Projects</a></li>
                 <li><a href="portfolio.html" class="active">About</a></li>
+                <li><a href="/mementomori/">Memento Mori</a></li>
                 <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button></li>
             </ul>
         </div>
     </nav>
 
-    <main>
+    <main class="wide-main">
         <div class="profile-header">
-            <img src="assets/img/prof_pic.jpg" alt="Suhas Rao Tamvada">
-            <h1>Suhas Rao Tamvada</h1>
-            <p class="tagline">Mechanical Engineer at Tesla &middot; PhD in Thermal Science</p>
+            <img src="assets/img/prof_pic.jpg" alt="Suhas Tamvada">
+            <h1>Suhas Tamvada</h1>
         </div>
 
-        <div class="article-content" id="content">
+        <div class="article-content about-intro" id="content">
             <p class="loading">Loading...</p>
+        </div>
+
+        <div id="project-groups">
+            <p class="loading">Loading projects...</p>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2026 Suhas Rao Tamvada</p>
+        <p>&copy; 2026 Suhas Tamvada</p>
     </footer>
 
     <script>
@@ -82,6 +85,76 @@
                 document.getElementById('content').innerHTML =
                     '<p class="empty-state">Error loading content.</p>';
             });
+    </script>
+    <script>
+      (function() {
+        var container = document.getElementById('project-groups');
+        var GROUP_ORDER = ['Thermals', 'Fluids', 'Misc'];
+
+        function renderCard(p) {
+          var imageHtml = p.image
+            ? '<div class="project-card-image"><img src="' + p.image + '" alt="' + p.name + '"></div>'
+            : '';
+
+          var techHtml = (p.tech || []).map(function(t) {
+            return '<span class="tech-tag">' + t + '</span>';
+          }).join('');
+
+          var linksHtml = '';
+          (p.papers || []).forEach(function(paper) {
+            linksHtml += '<a href="' + paper.url + '" class="project-link" target="_blank" rel="noopener">' + paper.label + '</a>';
+          });
+          if (p.github) {
+            linksHtml += '<a href="' + p.github + '" class="project-link" target="_blank" rel="noopener">GitHub</a>';
+          }
+          if (p.url) {
+            linksHtml += '<a href="' + p.url + '" class="project-link" target="_blank" rel="noopener">Live Site</a>';
+          }
+
+          return '<div class="project-card" id="' + p.id + '">' +
+            imageHtml +
+            '<div class="project-card-body">' +
+              '<div class="project-card-meta">' + p.year + '</div>' +
+              '<h2 class="project-card-title">' + p.name + '</h2>' +
+              '<p class="project-card-desc">' + p.description + '</p>' +
+              '<div class="project-card-tech">' + techHtml + '</div>' +
+              '<div class="project-card-links">' + linksHtml + '</div>' +
+            '</div>' +
+          '</div>';
+        }
+
+        fetch('assets/projects.json')
+          .then(function(r) {
+            if (!r.ok) throw new Error('Failed to load');
+            return r.json();
+          })
+          .then(function(projects) {
+            if (!projects || projects.length === 0) {
+              container.innerHTML = '<p class="empty-state">No projects yet.</p>';
+              return;
+            }
+
+            container.innerHTML = GROUP_ORDER.map(function(group) {
+              var items = projects
+                .filter(function(p) { return p.group === group; })
+                .sort(function(a, b) { return (b.sortYear || 0) - (a.sortYear || 0); });
+              if (items.length === 0) return '';
+
+              return '<section class="project-group">' +
+                '<h2 class="project-group-title">' + group + '</h2>' +
+                '<div class="project-grid">' + items.map(renderCard).join('') + '</div>' +
+              '</section>';
+            }).join('');
+
+            if (location.hash) {
+              var target = document.querySelector(location.hash);
+              if (target) target.scrollIntoView();
+            }
+          })
+          .catch(function() {
+            container.innerHTML = '<p class="empty-state">Could not load projects.</p>';
+          });
+      })();
     </script>
     <script>
       (function() {
