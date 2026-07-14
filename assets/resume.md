@@ -2,70 +2,25 @@ I'm Suhas — a mechanical engineer fascinated by what happens at the boundaries
 
 Right now, I'm at **Tesla** in Palo Alto, working on Drive Systems Engineering. I design and validate thermal management systems for the power electronics inside electric vehicle drive inverters — and I'm helping chart the roadmap for what next-generation thermal management looks like. It's the kind of work where the fundamental physics I spent years studying in the lab directly shapes the products that will define the future of transportation.
 
-But let me back up.
+The road here ran through three cities. I grew up in Hyderabad, India, where a senior design project on automotive head restraints gave me my first taste of engineering that protects people. In 2018, I moved to Chicago for my M.S. at the University of Illinois at Chicago, chasing a deceptively simple question: *what happens when an oil drop meets a water surface?* Then Gainesville, where my Ph.D. at the University of Florida took on one of the oldest unsolved problems in thermal science — critical heat flux — followed by a postdoc turning that physics into data center cooling technology.
+
+I'm drawn to problems where the physics is rich, the stakes are real, and the engineering has to be elegant. If any of this resonates — or if you just want to talk about boiling — I'd love to hear from you.
 
 ---
 
-## The Early Days
+## Selected Work
 
-I grew up in Hyderabad, India, and studied mechanical engineering at Jawaharlal Nehru Technological University. My senior design project — analyzing guide rods for an automotive head restraint — gave me my first real taste of how engineering impacts human safety. That work ran alongside a design internship at Satyam Venture Engineering Services (BMW Division), where we simulated rear-end collisions on a sedan and managed to improve the safety rating by 8%. It was my first experience seeing how careful analysis translates into something that protects people, and it convinced me I wanted to go deeper.
+- **Explained the physics of critical heat flux** — my Ph.D. thesis showed the evaporation momentum limit is 3–4x higher than a century of theory assumed, and achieved a 6x increase in CHF through flow stabilization. [→ CHF physics](projects.html#chf-physics)
 
----
+- **Built a membrane heat sink with 10x lower thermal resistance** — a new two-phase cooling paradigm for data centers and high-power electronics, which I led from TRL 3 to TRL 6 as a postdoc heading a team of six. [→ Membrane heat sink](projects.html#membrane-heat-sink)
 
-## Chasing Droplets in Chicago
+- **Uncovered how underwater oil drops burst** at the water-air interface — physics behind oil spills and ocean aerosols, published in *Physical Review Letters*. [→ Oil drop bursting](projects.html#oil-drop-bursting)
 
-In 2018, I moved to Chicago to pursue my M.S. at the University of Illinois at Chicago. My research there was beautifully simple in its question and surprisingly complex in its physics: *what happens when an oil drop meets a water surface?*
+- **Showed how freezing controls drop impact outcomes** on sublimating surfaces — solidification delays fragmentation and suppresses rebound, published in *Physical Review Fluids*. [→ Drop impact on sublimating surfaces](projects.html#drop-freezing)
 
-<img src="assets/img/Drops_yin_yang.jpg" alt="Oil-water drop interactions" class="research-img">
-<p class="img-caption">Oil and water drops: simple in appearance, rich in physics.</p>
+- **Derived scaling laws for oil drops spreading on water** — my M.S. work, matching experiments with R² = 0.99, published in the *Journal of Colloid & Interface Science*. [→ Oil drop spreading](projects.html#oil-drop-spreading)
 
-We investigated partial coalescence, spreading behavior, and even drop freezing on sublimating surfaces. The scaling laws we developed matched experiments with an R-squared of 0.99 — the kind of agreement that makes you trust the physics. This work had real-world implications too, from oil spill mitigation to self-cleaning surface design.
-
-<img src="assets/img/JCIS_spreading.jpg" alt="Spreading behavior of oil drops" class="research-img">
-<p class="img-caption">Spreading dynamics of oil drops on water-air interfaces.</p>
-
----
-
-## The PhD Years: A Century-Old Puzzle
-
-I moved to Gainesville in 2020 to start my Ph.D. at the University of Florida, and this is where things got really exciting.
-
-**Critical Heat Flux** — the point where a boiling surface suddenly and catastrophically fails to remove heat — has been one of the oldest unsolved problems in thermal science. It's the reason nuclear reactors have safety limits. It's the ceiling that constrains how much power you can push through electronics. My thesis, *Physics of Critical Heat Flux — Answers to Century Old Questions and New Discoveries*, tackled this head-on.
-
-<img src="assets/img/CHF_S_curve.png" alt="CHF S-curve" class="research-img">
-<p class="img-caption">The boiling curve — understanding the physics at the critical transition.</p>
-
-We achieved a **6x increase in critical heat flux** and a **5x improvement in heat transfer coefficient** over the state of the art. More importantly, we developed force balance-based correlations that actually *explain* the physics — not just predict it.
-
-<img src="assets/img/1_slide_PRL_2024_Summary.jpg" alt="PRL 2024 research summary" class="research-img">
-<p class="img-caption">Summary of our Physical Review Letters publication on CHF physics.</p>
-
-One of the most rewarding outcomes was our proof-of-concept **membrane heat sink** that reduced thermal resistance by 10x for data center cooling. We also developed heat pipes for low-gravity environments — because it turns out, keeping things cool in space is just as hard as it sounds.
-
-<img src="assets/img/MembraneHeatSink.jpg" alt="Membrane Heat Sink concept" class="research-img">
-<p class="img-caption">The membrane heat sink — a new paradigm for high-performance cooling.</p>
-
-<img src="assets/img/MHS_performance.jpg" alt="MHS performance data" class="research-img">
-<p class="img-caption">Performance comparison showing 10x reduction in thermal resistance.</p>
-
----
-
-## From Lab to Product
-
-Between my PhD years, I interned at **Airity Technologies** (now part of Advanced Energy) in Redwood City, where I led a small team of three developing a high-voltage module and bringing it to market. This was my first deep exposure to the full product development cycle — from creating a bill of materials for high-volume manufacturing to contributing to patent applications. Selecting thermal interface materials that had to simultaneously satisfy electrical, thermal, and mechanical requirements taught me something important: real engineering is always multi-objective.
-
-<img src="assets/img/PowerElectronics_simulation.jpg" alt="Power electronics thermal simulation" class="research-img">
-<p class="img-caption">Thermal simulation work for power electronics packaging.</p>
-
-After my PhD, I stayed at UF as a postdoctoral researcher, leading a team of five graduate students and another postdoc. Together, we advanced our phase-change cooling technology from TRL 3 to TRL 6 — bridging the gap from *"this works in a lab"* to *"this could work in a data center."* I also served as the thermal subject-matter expert for advanced technology integration teams, directing thermal modeling for data center pathfinding and product roadmapping.
-
----
-
-## What Drives Me
-
-I'm drawn to problems where the physics is rich, the stakes are real, and the engineering has to be elegant. Whether it's understanding why a bubble departs a surface at precisely the moment it does, or designing a cooling system that keeps an EV inverter running at peak efficiency, I find the same satisfaction in the work: making the invisible forces of heat and fluid flow serve human needs.
-
-If any of this resonates — or if you just want to talk about boiling — I'd love to hear from you.
+- **Simulated drop coalescence from first principles** — an axisymmetric VOF study of drop-pool coalescence on the Basilisk CFD framework. [→ Drop coalescence simulation](projects.html#drop-coalescence-simulation)
 
 ---
 

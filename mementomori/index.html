@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visualize your time in life. All calculations happen in your browser.">
+  <title>Memento Mori</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="canonical" href="https://tamvada.me/mementomori/">
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0B0FKP0KQW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0B0FKP0KQW');
+</script>
+<body>
+  <header class="page-header">
+    <div>
+        <h1 class="site-title">Memento Mori</h1>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <h2>Remember Death</h2>
+        <p> It is important to remember death, the only inevitability in one's life. </p>
+        <p> Enter your birth date and a projected lifespan to visualize the weeks you've lived and the time you have left. Everything stays in your browser.</p>
+      </div>
+      <form id="life-form" class="card" aria-describedby="summary-text">
+        <div class="field">
+          <label for="birthdate">Birth date</label>
+          <input type="date" id="birthdate" name="birthdate" required>
+        </div>
+        <div class="field">
+          <label for="expectancy">Projected lifespan (years)</label>
+          <input type="number" id="expectancy" name="expectancy" min="1" max="120" value="90" required>
+        </div>
+        <div class="field">
+          <label for="sleep-hours">Average sleep (hours/day)</label>
+          <input type="number" id="sleep-hours" name="sleep-hours" min="0" max="24" step="0.5" value="8" required>
+        </div>
+        <div class="field">
+          <label for="enddate">Or provide a target end date (optional)</label>
+          <input type="date" id="enddate" name="enddate" aria-describedby="enddate-help">
+          <small id="enddate-help" class="help-text">If set, this overrides the projected lifespan.</small>
+        </div>
+        <button type="submit" class="primary">Visualize</button>
+        <p class="privacy-note">No data leaves this page. Calculations happen locally.</p>
+      </form>
+    </section>
+
+    <section class="summary">
+      <div class="card">
+        <p id="summary-text" aria-live="polite" tabindex="-1">Enter your details to see the grid.</p>
+        <div id="stats-row" class="stats-row" aria-live="polite"></div>
+        <div class="legend" aria-label="Legend">
+          <span class="legend-swatch lived"></span><span>Lived</span>
+          <span class="legend-swatch current"></span><span>Current week</span>
+          <span class="legend-swatch sleep"></span><span>Sleep time</span>
+          <span class="legend-swatch remaining"></span><span>Remaining</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-section">
+      <div id="weeks-grid" class="weeks-grid card placeholder" aria-live="polite" aria-label="Weeks grid"></div>
+    </section>
+
+    <section class="faq card">
+      <h3>Coming Soon</h3>
+      <ul>
+        <li>Download wallpapers.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <p>© 2026 Suhas Tamvada. All rights reserved. <a href="/">tamvada.me</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

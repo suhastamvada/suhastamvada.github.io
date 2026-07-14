@@ -392,6 +392,34 @@ main.wide-main {
 }
 
 /* ─── Projects Page ─── */
+.project-group {
+  margin-bottom: 3rem;
+  scroll-margin-top: 5rem;
+}
+
+.project-group-title {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-heading);
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.project-card-meta {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.project-card {
+  scroll-margin-top: 5rem;
+}
+
 .project-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -466,7 +494,8 @@ main.wide-main {
 
 .project-card-links {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
 }
 
 .project-link {

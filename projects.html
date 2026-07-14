@@ -56,7 +56,7 @@
             <p class="subtitle">Things I've built and am building.</p>
         </div>
 
-        <div class="project-grid" id="project-grid">
+        <div id="project-groups">
             <p class="loading">Loading projects...</p>
         </div>
     </main>
@@ -67,7 +67,40 @@
 
     <script>
       (function() {
-        var grid = document.getElementById('project-grid');
+        var container = document.getElementById('project-groups');
+        var GROUP_ORDER = ['Thermals', 'Fluids', 'Misc'];
+
+        function renderCard(p) {
+          var imageHtml = p.image
+            ? '<div class="project-card-image"><img src="' + p.image + '" alt="' + p.name + '"></div>'
+            : '';
+
+          var techHtml = (p.tech || []).map(function(t) {
+            return '<span class="tech-tag">' + t + '</span>';
+          }).join('');
+
+          var linksHtml = '';
+          (p.papers || []).forEach(function(paper) {
+            linksHtml += '<a href="' + paper.url + '" class="project-link" target="_blank" rel="noopener">' + paper.label + '</a>';
+          });
+          if (p.github) {
+            linksHtml += '<a href="' + p.github + '" class="project-link" target="_blank" rel="noopener">GitHub</a>';
+          }
+          if (p.url) {
+            linksHtml += '<a href="' + p.url + '" class="project-link" target="_blank" rel="noopener">Live Site</a>';
+          }
+
+          return '<div class="project-card" id="' + p.id + '">' +
+            imageHtml +
+            '<div class="project-card-body">' +
+              '<div class="project-card-meta">' + p.year + '</div>' +
+              '<h2 class="project-card-title">' + p.name + '</h2>' +
+              '<p class="project-card-desc">' + p.description + '</p>' +
+              '<div class="project-card-tech">' + techHtml + '</div>' +
+              '<div class="project-card-links">' + linksHtml + '</div>' +
+            '</div>' +
+          '</div>';
+        }
 
         fetch('assets/projects.json')
           .then(function(r) {
@@ -76,40 +109,30 @@
           })
           .then(function(projects) {
             if (!projects || projects.length === 0) {
-              grid.innerHTML = '<p class="empty-state">No projects yet.</p>';
+              container.innerHTML = '<p class="empty-state">No projects yet.</p>';
               return;
             }
 
-            grid.innerHTML = projects.map(function(p) {
-              var imageHtml = p.image
-                ? '<div class="project-card-image"><img src="' + p.image + '" alt="' + p.name + '"></div>'
-                : '';
+            container.innerHTML = GROUP_ORDER.map(function(group) {
+              var items = projects
+                .filter(function(p) { return p.group === group; })
+                .sort(function(a, b) { return (b.sortYear || 0) - (a.sortYear || 0); });
+              if (items.length === 0) return '';
 
-              var techHtml = p.tech.map(function(t) {
-                return '<span class="tech-tag">' + t + '</span>';
-              }).join('');
-
-              var linksHtml = '';
-              if (p.github) {
-                linksHtml += '<a href="' + p.github + '" class="project-link" target="_blank" rel="noopener">GitHub</a>';
-              }
-              if (p.url) {
-                linksHtml += '<a href="' + p.url + '" class="project-link" target="_blank" rel="noopener">Live Site</a>';
-              }
-
-              return '<div class="project-card">' +
-                imageHtml +
-                '<div class="project-card-body">' +
-                  '<h2 class="project-card-title">' + p.name + '</h2>' +
-                  '<p class="project-card-desc">' + p.description + '</p>' +
-                  '<div class="project-card-tech">' + techHtml + '</div>' +
-                  '<div class="project-card-links">' + linksHtml + '</div>' +
-                '</div>' +
-              '</div>';
+              return '<section class="project-group">' +
+                '<h2 class="project-group-title">' + group + '</h2>' +
+                '<div class="project-grid">' + items.map(renderCard).join('') + '</div>' +
+              '</section>';
             }).join('');
+
+            // Scroll to anchor after dynamic render
+            if (location.hash) {
+              var target = document.querySelector(location.hash);
+              if (target) target.scrollIntoView();
+            }
           })
           .catch(function() {
-            grid.innerHTML = '<p class="empty-state">Could not load projects.</p>';
+            container.innerHTML = '<p class="empty-state">Could not load projects.</p>';
           });
       })();
     </script>
