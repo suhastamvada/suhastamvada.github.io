@@ -4,4 +4,4 @@ Recently, I'm most curious about diffusion models in machine learning, nuclear e
 
 Below is a selection of my work. If any of it resonates, I'd love to hear from you.
 
-Contact: (suhas@tamvada.me)[mailto.suhas@tamvada.me]
+Contact: [suhas@tamvada.me](mailto:suhas@tamvada.me)
