@@ -11,8 +11,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects — Suhas Tamvada</title>
-    <meta name="description" content="Research projects by Suhas Tamvada.">
+    <title>Project — Suhas Tamvada</title>
+    <meta name="description" content="A project by Suhas Tamvada.">
 
     <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
     <script>
@@ -29,9 +29,9 @@
     <main class="one-page">
         <a href="/" class="back-link">&larr; Suhas Tamvada</a>
 
-        <div id="group-content">
-            <p class="loading">Loading projects...</p>
-        </div>
+        <article id="project" class="project-detail">
+            <p class="loading">Loading project...</p>
+        </article>
 
         <footer>
             <p>&copy; 2026 Suhas Tamvada</p>
@@ -40,15 +40,8 @@
 
     <script>
       (function() {
-        var container = document.getElementById('group-content');
-        var group = new URLSearchParams(window.location.search).get('group') || 'all';
-
-        var TITLES = {
-          fluids: 'Fluids',
-          thermals: 'Thermals',
-          misc: 'Misc',
-          all: 'Projects'
-        };
+        var container = document.getElementById('project');
+        var id = new URLSearchParams(window.location.search).get('id');
 
         function esc(s) {
           var d = document.createElement('div');
@@ -56,21 +49,23 @@
           return d.innerHTML;
         }
 
-        function renderProject(p) {
+        function render(p) {
+          document.title = p.name + ' — Suhas Tamvada';
+
           var imgs = p.images || [];
           var sliderHtml = '';
           if (imgs.length > 0) {
             sliderHtml =
               '<div class="slider">' +
-                '<div class="slider-track">' +
+                '<div class="slider-track" id="slider-track">' +
                 imgs.map(function(src, i) {
                   return '<div class="slide"><img src="' + src + '" alt="' + esc(p.name) + ' — slide ' + (i + 1) + '" loading="lazy" onerror="this.closest(\'.slider\').style.display=\'none\'"></div>';
                 }).join('') +
                 '</div>' +
                 (imgs.length > 1
-                  ? '<button class="slider-btn prev" aria-label="Previous image">&larr;</button>' +
-                    '<button class="slider-btn next" aria-label="Next image">&rarr;</button>' +
-                    '<div class="slider-dots">' +
+                  ? '<button class="slider-btn prev" id="slider-prev" aria-label="Previous image">&larr;</button>' +
+                    '<button class="slider-btn next" id="slider-next" aria-label="Next image">&rarr;</button>' +
+                    '<div class="slider-dots" id="slider-dots">' +
                     imgs.map(function(_, i) {
                       return '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Go to image ' + (i + 1) + '"></button>';
                     }).join('') +
@@ -90,23 +85,22 @@
             linksHtml += '<a href="' + p.github + '" class="project-link" target="_blank" rel="noopener">GitHub</a>';
           }
 
-          return '<section class="project-detail" id="' + p.id + '">' +
+          container.innerHTML =
             '<div class="project-detail-header">' +
               '<p class="project-card-meta">' + esc(p.year || '') + '</p>' +
-              '<h2 class="project-detail-title">' + esc(p.name) + '</h2>' +
+              '<h1>' + esc(p.name) + '</h1>' +
               '<div class="project-card-tech">' + techHtml + '</div>' +
             '</div>' +
             sliderHtml +
             '<p class="project-summary">' + esc(p.summary || '') + '</p>' +
-            (linksHtml ? '<div class="project-card-links">' + linksHtml + '</div>' : '') +
-          '</section>';
+            (linksHtml ? '<div class="project-card-links">' + linksHtml + '</div>' : '');
+
+          if (imgs.length > 1) initSlider(imgs.length);
         }
 
-        function initSlider(slider) {
-          var track = slider.querySelector('.slider-track');
-          var dots = slider.querySelectorAll('.dot');
-          var n = slider.querySelectorAll('.slide').length;
-          if (n < 2) return;
+        function initSlider(n) {
+          var track = document.getElementById('slider-track');
+          var dots = document.getElementById('slider-dots').querySelectorAll('.dot');
           var current = 0;
 
           function go(i) {
@@ -114,12 +108,13 @@
             track.scrollTo({ left: track.clientWidth * current, behavior: 'smooth' });
           }
 
-          slider.querySelector('.prev').addEventListener('click', function() { go(current - 1); });
-          slider.querySelector('.next').addEventListener('click', function() { go(current + 1); });
+          document.getElementById('slider-prev').addEventListener('click', function() { go(current - 1); });
+          document.getElementById('slider-next').addEventListener('click', function() { go(current + 1); });
           dots.forEach(function(dot) {
             dot.addEventListener('click', function() { go(parseInt(dot.dataset.i, 10)); });
           });
 
+          // Sync dots on manual swipe (scroll-snap)
           var timer;
           track.addEventListener('scroll', function() {
             clearTimeout(timer);
@@ -136,31 +131,15 @@
             return r.json();
           })
           .then(function(projects) {
-            var items = group === 'all'
-              ? projects
-              : projects.filter(function(p) { return p.group === group; });
-
-            if (items.length === 0) {
-              container.innerHTML = '<p class="empty-state">No projects here yet. <a href="/">Go home</a>.</p>';
+            var p = projects.find(function(x) { return x.id === id; });
+            if (!p) {
+              container.innerHTML = '<p class="empty-state">Project not found. <a href="/">Go home</a>.</p>';
               return;
             }
-
-            var title = TITLES[group] || 'Projects';
-            document.title = title + ' — Suhas Tamvada';
-
-            container.innerHTML =
-              '<h1 class="group-title">' + title + '</h1>' +
-              items.map(renderProject).join('');
-
-            container.querySelectorAll('.slider').forEach(initSlider);
-
-            if (location.hash) {
-              var target = document.querySelector(location.hash);
-              if (target) target.scrollIntoView();
-            }
+            render(p);
           })
           .catch(function() {
-            container.innerHTML = '<p class="empty-state">Could not load projects.</p>';
+            container.innerHTML = '<p class="empty-state">Could not load project.</p>';
           });
       })();
     </script>

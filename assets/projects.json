@@ -2,78 +2,151 @@
   {
     "id": "membrane-heat-sink",
     "name": "Membrane-Assisted Phase-Change Heat Sink",
-    "group": "Thermals",
     "year": "2021–Present",
-    "sortYear": 2026,
-    "description": "A new cooling paradigm for data centers and high-power electronics: a porous membrane positioned above the heater surface stabilizes two-phase flow, delivering heat fluxes up to 2 kW/cm² and a 10x reduction in thermal resistance over state-of-the-art heat sinks. As a postdoc, I led a team of six advancing this technology from TRL 3 to TRL 6.",
-    "tech": ["Two-Phase Cooling", "Microfabrication", "Data Centers", "ANSYS"],
-    "papers": [
-      { "label": "Applied Thermal Engineering 2023 (arXiv)", "url": "https://arxiv.org/abs/2207.12508" },
-      { "label": "IEEE TCPMT 2021 (TechRxiv)", "url": "https://www.techrxiv.org/doi/full/10.36227/techrxiv.19602208.v1" }
+    "summary": "Data centers spend a staggering share of their energy budget just moving heat, and conventional two-phase heat sinks are limited by unstable boiling. This project introduced a new cooling architecture: a porous membrane positioned above the heater surface that separates liquid and vapor paths and stabilizes two-phase flow. The result is heat fluxes up to 2 kW/cm², heat transfer coefficients up to 1.8 MW/m²K, and a 10x reduction in thermal resistance over state-of-the-art heat sinks. As a postdoc, I led a team of five graduate students and a postdoctoral researcher advancing the technology from a lab proof-of-concept (TRL 3) to a system demonstrator (TRL 6), including scalable packaging processes and techno-economic analyses for data center deployment.",
+    "tech": [
+      "Two-Phase Cooling",
+      "Microfabrication",
+      "Data Centers"
     ],
-    "image": "assets/img/MembraneHeatSink.jpg"
+    "images": [
+      "assets/img/MembraneHeatSink.jpg",
+      "assets/img/MHS_performance.jpg",
+      "assets/img/DC_resistance.jpg"
+    ],
+    "papers": [
+      {
+        "label": "Applied Thermal Engineering 2023 (arXiv)",
+        "url": "https://arxiv.org/abs/2207.12508"
+      },
+      {
+        "label": "IEEE TCPMT 2021 (TechRxiv)",
+        "url": "https://www.techrxiv.org/doi/full/10.36227/techrxiv.19602208.v1"
+      }
+    ],
+    "group": "thermals",
+    "blurb": "A cooling paradigm delivering up to 2 kW/cm² and a 10x reduction in thermal resistance; led from TRL 3 to TRL 6."
   },
   {
     "id": "chf-physics",
     "name": "Physics of Critical Heat Flux",
-    "group": "Thermals",
     "year": "2020–2024",
-    "sortYear": 2024,
-    "description": "My PhD thesis tackled one of the oldest unsolved problems in thermal science: why does a boiling surface suddenly fail to remove heat? By resolving the forces acting on a departing bubble, we showed the evaporation momentum limit is 3–4x higher than previously believed, achieved a 6x increase in critical heat flux through flow stabilization, and developed force-balance correlations that explain the physics rather than just fit it.",
-    "tech": ["Pool Boiling", "High-Speed Imaging", "Scaling Analysis"],
-    "papers": [
-      { "label": "Int. J. Heat & Mass Transfer 2023 (open manuscript)", "url": "https://www.sciencedirect.com/science/article/am/pii/S0017931022013059" }
+    "summary": "Critical heat flux — the point where a boiling surface suddenly and catastrophically fails to remove heat — has been an unsolved problem in thermal science for a century. It sets the safety limits of nuclear reactors and the power ceiling of electronics cooling. My PhD thesis resolved the forces acting on a departing bubble to show that the evaporation momentum limit is 3–4x higher than classical theory assumed, reconciling the two competing schools of thought (hydrodynamic instability vs. surface-based mechanisms). By stabilizing the flow near the surface we achieved a 6x increase in critical heat flux and a 5x improvement in heat transfer coefficient over the state of the art, and developed force-balance correlations that explain the physics rather than just fit it.",
+    "tech": [
+      "Pool Boiling",
+      "High-Speed Imaging",
+      "Scaling Analysis"
     ],
-    "image": "assets/img/CHF_S_curve.png"
+    "images": [
+      "assets/img/CHF_S_curve.png"
+    ],
+    "papers": [
+      {
+        "label": "Int. J. Heat & Mass Transfer 2023 (open manuscript)",
+        "url": "https://www.sciencedirect.com/science/article/am/pii/S0017931022013059"
+      }
+    ],
+    "group": "thermals",
+    "blurb": "Showed the evaporation momentum limit is 3–4x higher than a century of theory assumed; 6x increase in critical heat flux."
   },
   {
     "id": "oil-drop-bursting",
     "name": "Bursting of Underwater Oil Drops",
-    "group": "Fluids",
     "year": "2024",
-    "sortYear": 2024,
-    "description": "What happens when an oil drop rises to a water-air interface and ruptures? We uncovered the mechanisms that decide whether the drop spreads, fragments, or stays intact — physics that governs oil spill cleanup and aerosol generation at the ocean surface. Published in Physical Review Letters.",
-    "tech": ["Interfacial Flows", "High-Speed Imaging", "Scaling Analysis"],
-    "papers": [
-      { "label": "Physical Review Letters 2024 (arXiv)", "url": "https://arxiv.org/abs/2410.16961" }
+    "summary": "When an oil drop rises to the water-air interface, the thin film above it ruptures — and what happens next determines how oil spreads across the ocean surface after a spill and how aerosols form above it. We uncovered the mechanisms that decide whether the drop spreads into a film, fragments into daughter droplets, or stays intact, and mapped the outcomes onto the drop's physical properties. Published in Physical Review Letters.",
+    "tech": [
+      "Interfacial Flows",
+      "High-Speed Imaging"
     ],
-    "image": "assets/img/1_slide_PRL_2024_Summary.jpg"
+    "images": [
+      "assets/img/1_slide_PRL_2024_Summary.jpg"
+    ],
+    "papers": [
+      {
+        "label": "Physical Review Letters 2024 (arXiv)",
+        "url": "https://arxiv.org/abs/2410.16961"
+      }
+    ],
+    "group": "fluids",
+    "blurb": "The mechanisms that decide whether a drop rising to the surface spreads, fragments, or stays intact."
   },
   {
     "id": "drop-freezing",
     "name": "Drop Impact on Sublimating Surfaces",
-    "group": "Fluids",
     "year": "2024",
-    "sortYear": 2024,
-    "description": "Drops impacting dry ice freeze from below as they spread. We showed that the solidified layer thickness — set by impact velocity — controls whether a drop rebounds or fragments, with solidification delaying fragmentation and suppressing rebound. Relevant to anti-icing and self-cleaning surface design. Published in Physical Review Fluids.",
-    "tech": ["Solidification", "Drop Impact", "High-Speed Imaging"],
-    "papers": [
-      { "label": "Physical Review Fluids 2024 (arXiv)", "url": "https://arxiv.org/abs/2208.03801" }
+    "summary": "A water drop hitting dry ice freezes from below even as it spreads. We showed that the thickness of this solidified layer — set by the impact velocity — is the primary control on the outcome: enough solidification suppresses rebound and delays fragmentation. The findings inform the design of anti-icing and self-cleaning surfaces, where whether a drop sticks, bounces, or shatters is exactly what matters. Published in Physical Review Fluids.",
+    "tech": [
+      "Solidification",
+      "Drop Impact",
+      "High-Speed Imaging"
     ],
-    "image": "assets/img/Dry_Ice_1_slide_Summary.jpg"
+    "images": [
+      "assets/img/Dry_Ice_1_slide_Summary.jpg"
+    ],
+    "papers": [
+      {
+        "label": "Physical Review Fluids 2024 (arXiv)",
+        "url": "https://arxiv.org/abs/2208.03801"
+      }
+    ],
+    "group": "fluids",
+    "blurb": "How freezing from below delays fragmentation and suppresses rebound of impacting drops."
   },
   {
     "id": "drop-coalescence-simulation",
     "name": "Drop Coalescence Simulation",
-    "group": "Fluids",
     "year": "2024",
-    "sortYear": 2023,
-    "description": "Axisymmetric volume-of-fluid simulation of a water drop coalescing into a flat pool, built on the Basilisk CFD framework with adaptive mesh refinement. Resolves spreading behavior and tracks the full energy budget through coalescence.",
-    "tech": ["C", "Basilisk CFD", "Python"],
+    "summary": "An axisymmetric volume-of-fluid simulation of a water drop coalescing into a flat pool, built on the Basilisk CFD framework with adaptive mesh refinement. The solver resolves the spreading dynamics through coalescence and tracks the full energy budget — kinetic, surface, and viscous dissipation — as the drop merges. The code is open source.",
+    "tech": [
+      "C",
+      "Basilisk CFD",
+      "Python"
+    ],
+    "images": [
+      "assets/img/Drops_yin_yang.jpg"
+    ],
+    "papers": [],
     "github": "https://github.com/suhastamvada/drop_coalescence",
-    "image": "assets/img/Drops_yin_yang.jpg"
+    "group": "misc",
+    "blurb": "Axisymmetric volume-of-fluid simulation of a drop merging into a pool, built on Basilisk."
   },
   {
     "id": "oil-drop-spreading",
     "name": "Coalescence & Spreading of Oil Drops on Water",
-    "group": "Fluids",
     "year": "2018–2021",
-    "sortYear": 2021,
-    "description": "My MS research: a systematic study of 11 oils deposited on water, showing that coalescence outcomes are set by the drop's Ohnesorge number and that early-time spreading is oscillatory. The scaling laws we derived matched experiments with R² = 0.99 — with direct implications for oil spill mitigation. Published in the Journal of Colloid & Interface Science.",
-    "tech": ["Interfacial Flows", "Tensiometry", "Scaling Analysis"],
-    "papers": [
-      { "label": "J. Colloid & Interface Science 2021 (arXiv)", "url": "https://arxiv.org/abs/2101.00293" }
+    "summary": "What happens when a drop of oil gently lands on water? My MS research answered this with a systematic study of 11 oils — n-alkanes, polymers, and hydrocarbons spanning a wide range of viscosity and spreading coefficient. We showed that the coalescence outcome is set by the drop's Ohnesorge number and that early-time spreading is oscillatory before the film settles, deriving scaling laws that matched experiments with R² = 0.99. The physics matters wherever oil meets water: oil spill mitigation, pharmaceutical emulsions, and targeted drug delivery. Published in the Journal of Colloid & Interface Science.",
+    "tech": [
+      "Interfacial Flows",
+      "Tensiometry",
+      "Scaling Analysis"
     ],
-    "image": "assets/img/JCIS_spreading.jpg"
+    "images": [
+      "assets/img/JCIS_spreading.jpg"
+    ],
+    "papers": [
+      {
+        "label": "J. Colloid & Interface Science 2021 (arXiv)",
+        "url": "https://arxiv.org/abs/2101.00293"
+      }
+    ],
+    "group": "fluids",
+    "blurb": "Scaling laws that predict whether an oil drop merges or spreads on water, matching experiments with R² = 0.99."
+  },
+  {
+    "id": "head-restraint",
+    "name": "Optimizing Guide Rods of an Automotive Head Restraint",
+    "year": "2016–17",
+    "summary": "Rear-end collisions account for 28% of all automobile crashes, and the resulting whiplash injury is governed largely by how well the headrest — and the guide rods that anchor it — restrain the occupant's head. For my undergraduate thesis, I designed and optimized the guide rods of an automotive head restraint to reduce whiplash injury risk. I modeled three guide-rod geometries in SolidWorks (13.8 mm OD stainless-steel tube, benchmarked against Mazda and Toyota production designs) and evaluated each with static structural FEA in ANSYS Workbench at three headrest height settings, under the ~221 N load corresponding to a 5g head acceleration in a low-speed rear impact. The optimized geometry withstood the crash load with the lowest equivalent stress and deformation across height settings — up to 42% lower peak stress than the conventional baseline (47.3 MPa vs 82.0 MPa at the highest setting) — and was identified as the best candidate for a safer headrest.",
+    "tech": [
+      "SolidWorks",
+      "ANSYS Workbench",
+      "FEA"
+    ],
+    "images": [
+      "assets/img/HeadRestraint_1_slide_Summary.png"
+    ],
+    "papers": [],
+    "group": "misc",
+    "blurb": "FEA-optimized head-restraint guide rods, cutting peak crash-load stress by 42% to reduce whiplash risk."
   }
 ]

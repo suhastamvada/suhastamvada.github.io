@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `<span><strong>${numberFmt.format(stats.lived)}</strong> lived</span>`,
       `<span><strong>1</strong> current</span>`,
       `<span><strong>${numberFmt.format(stats.remaining)}</strong> remaining</span>`,
-      `<span><strong>${numberFmt.format(stats.sleepDays)}</strong> days asleep (${formatHours(stats.sleepHours)}h/day)</span>`
+      `<span><strong>${numberFmt.format(stats.sleepWeeks)}</strong> asleep (${formatHours(stats.sleepHours)}h/day)</span>`
     ].join(' • ');
   };
 

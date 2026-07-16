@@ -31,12 +31,8 @@
     postListEl.innerHTML = posts
       .map(
         (post) => `
-        <li class="post-item">
-          <a href="article.html?file=${encodeURIComponent(post.slug + '.md')}">
-            <p class="post-date">${formatDate(post.date)}</p>
-            <h2 class="post-title">${post.title}</h2>
-            <p class="post-excerpt">${post.excerpt}</p>
-          </a>
+        <li class="post-item-simple">
+          <a href="article.html?file=${encodeURIComponent(post.slug + '.md')}">${post.title}</a>
         </li>`
       )
       .join('');

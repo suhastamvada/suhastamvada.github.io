@@ -12,19 +12,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suhas Tamvada</title>
-    <meta name="description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+    <meta name="description" content="Suhas Tamvada — engineer in San Jose, CA. Thermal and fluid sciences, from interfaces to energy transport to shipping products.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Suhas Tamvada — Blog">
-    <meta property="og:description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+    <meta property="og:title" content="Suhas Tamvada">
+    <meta property="og:description" content="Engineer in San Jose, CA. Thermal and fluid sciences, from interfaces to energy transport to shipping products.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tamvada.me/">
     <meta property="og:image" content="https://tamvada.me/assets/img/prof_pic.jpg">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Suhas Tamvada — Blog">
-    <meta name="twitter:description" content="Thoughts on thermal science, engineering, and the journey from lab to product.">
+    <meta name="twitter:title" content="Suhas Tamvada">
+    <meta name="twitter:description" content="Engineer in San Jose, CA. Thermal and fluid sciences, from interfaces to energy transport to shipping products.">
 
     <!-- RSS Autodiscovery -->
     <link rel="alternate" type="application/rss+xml" title="Suhas Tamvada" href="/feed.xml">
@@ -38,43 +38,112 @@
       })();
     </script>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
-    <nav>
-        <div class="nav-inner">
-            <a href="/" class="site-name">Suhas Tamvada</a>
-            <ul class="nav-links">
-                <li><a href="/" class="active">Blog</a></li>
-                <li><a href="portfolio.html">About</a></li>
-                <li><a href="/mementomori/">Memento Mori</a></li>
-                <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button></li>
+    <main class="one-page">
+        <!-- ─── Hero ─── -->
+        <header class="hero">
+            <div class="hero-top">
+                <h1>Suhas Tamvada</h1>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+            </div>
+            <p class="hero-location">San Jose, CA</p>
+            <ul class="social-row">
+                <li>
+                    <a href="mailto:suhas@tamvada.me" aria-label="Email" title="Email">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/suhastamvada" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://x.com/SuhasTamvada" target="_blank" rel="noopener" aria-label="X" title="X">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/in/suhastamvada/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                </li>
             </ul>
-        </div>
-    </nav>
+        </header>
 
-    <main>
-        <div class="page-header">
-            <h1>Writing</h1>
-            <p class="subtitle">Thoughts on thermal science, engineering, and everything in between.</p>
-        </div>
+        <!-- ─── Story ─── -->
+        <section class="timeline">
+            <ul>
+                <li>
+                    I grew up in Hyderabad, India, where I got my Mechanical Engineering B.Tech
+                    degree and
+                    <a href="project.html?id=head-restraint">optimized automobile head restraints</a>
+                    to reduce whiplash effects in rear end collisions as part of my
+                    undergraduate thesis.
+                </li>
+                <li>
+                    I then moved to Chicago, IL for my Master's to study
+                    <a href="projects.html?group=fluids">fluid interface interactions</a>
+                    with implications to oil spills, emulsions, and targeted drug delivery.
+                </li>
+                <li>
+                    Later, I got my PhD at University of Florida, researching
+                    <a href="project.html?id=chf-physics">thermal transport at interfaces</a>
+                    and developing
+                    <a href="project.html?id=membrane-heat-sink">data center cooling applications</a>.
+                </li>
+                <li>
+                    A bay area internship during my PhD opened my eyes to the fascinating world
+                    of building products. I found more joy in shipping a product than publishing
+                    a paper, and it led to my current role at Tesla, where I work on thermal
+                    management of power electronics.
+                </li>
+                <li>
+                    My current interests include nuclear energy, diffusion models in machine
+                    learning, cryptography, and quantum computing. Please reach out if you want
+                    to talk more!
+                </li>
+            </ul>
+        </section>
 
-        <ul class="post-list" id="post-list">
-            <li class="loading">Loading posts...</li>
-        </ul>
+        <!-- ─── Projects ─── -->
+        <section class="page-section">
+            <h2>Projects</h2>
+            <ul class="project-list">
+                <li>
+                    <a href="/mementomori/">Memento Mori</a>
+                    <span class="project-tagline">— remember death</span>
+                </li>
+                <li>
+                    <a href="project.html?id=drop-coalescence-simulation">Drop Coalescence Simulation</a>
+                    <span class="project-tagline">— open-source CFD of a drop merging into a pool</span>
+                </li>
+                <!-- TODO: add FollowMe here once it's ready to publish -->
+            </ul>
+        </section>
+
+        <!-- ─── Writing ─── -->
+        <section class="page-section">
+            <h2>Writing</h2>
+            <ul class="post-list" id="post-list">
+                <li class="loading">Loading...</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Suhas Tamvada</p>
+        </footer>
     </main>
 
-    <footer>
-        <p>&copy; 2026 Suhas Tamvada</p>
-    </footer>
-
-    <script src="js/app.js"></script>
+    <script src="js/app.js?v=2"></script>
     <script>
       (function() {
         var btn = document.getElementById('theme-toggle');
         function updateIcon() {
           var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          btn.textContent = isDark ? '\u2600' : '\u263E';
+          btn.textContent = isDark ? '☀' : '☾';
         }
         updateIcon();
         btn.addEventListener('click', function() {

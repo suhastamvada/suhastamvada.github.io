@@ -7,9 +7,18 @@
   <title>Memento Mori</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=5">
   <link rel="canonical" href="https://tamvada.me/mementomori/">
+
+  <!-- Dark mode: apply saved theme before CSS loads to prevent flash -->
+  <script>
+    (function() {
+      var theme = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0B0FKP0KQW"></script>
@@ -23,8 +32,10 @@
 <body>
   <header class="page-header">
     <div>
+        <a href="/" class="back-home">&larr; tamvada.me</a>
         <h1 class="site-title">Memento Mori</h1>
     </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
   </header>
 
   <main class="page">
@@ -62,10 +73,10 @@
         <p id="summary-text" aria-live="polite" tabindex="-1">Enter your details to see the grid.</p>
         <div id="stats-row" class="stats-row" aria-live="polite"></div>
         <div class="legend" aria-label="Legend">
-          <span class="legend-swatch lived"></span><span>Lived</span>
-          <span class="legend-swatch current"></span><span>Current week</span>
-          <span class="legend-swatch sleep"></span><span>Sleep time</span>
-          <span class="legend-swatch remaining"></span><span>Remaining</span>
+          <span class="legend-item"><span class="legend-swatch lived"></span>Lived</span>
+          <span class="legend-item"><span class="legend-swatch current"></span>Current week</span>
+          <span class="legend-item"><span class="legend-swatch sleep"></span>Sleep time</span>
+          <span class="legend-item"><span class="legend-swatch remaining"></span>Remaining</span>
         </div>
       </div>
     </section>
@@ -86,6 +97,23 @@
     <p>© 2026 Suhas Tamvada. All rights reserved. <a href="/">tamvada.me</a></p>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      function updateIcon() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        btn.textContent = isDark ? '☀' : '☾';
+      }
+      updateIcon();
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon();
+      });
+    })();
+  </script>
 </body>
 </html>
