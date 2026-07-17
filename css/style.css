@@ -68,9 +68,26 @@ main.one-page {
 
 .hero-top {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.hero-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.hero-id {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-top .theme-toggle {
+  align-self: flex-start;
+  flex-shrink: 0;
 }
 
 .hero h1 {
