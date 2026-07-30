@@ -8,7 +8,7 @@ If I had to pick a single skill that creates the biggest mental shift in an appr
 
 What does that look like in practice? When encountering a design problem, you don't just copy what's been done before and tweak it. You ask: what are the physical constraints here? What are the fundamental limits? What does the physics actually allow? You decompose the problem into its most basic elements and build your solution up from there.
 
-This isn't just abstract philosophy. [Farnam Street has a great primer on first principles thinking](https://fs.blog/first-principles/) that's worth reading. Elon Musk has spoken extensively about this approach -- [this conversation](hhttps://www.youtube.com/watch?v=NV3sBlRgzTI) is a good example of how he applies it to engineering decisions at scale.
+This isn't just abstract philosophy. [Farnam Street has a great primer on first principles thinking](https://fs.blog/first-principles/) that's worth reading. Elon Musk has spoken extensively about this approach -- [this conversation](https://www.youtube.com/watch?v=54OSbbtXrdI&t=1s) is a good example of how he applies it to engineering decisions at scale.
 
 Why does this matter for getting hired? Because interviewers at top companies, especially the ones who have had to go through many iterations of solving real world problems, can tell instantly if you understand fundamentals or are just memorizing formulas. When someone asks you why a design choice was made and your answer starts with "because that's how it's usually done," it's usually a red flag. It is virtually impossible to fake depth, especially in physics. Either you understand the physics or you don't, and that understanding comes from training yourself to think from first principles.
 
