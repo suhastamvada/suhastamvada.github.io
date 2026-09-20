@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suhas Family Tree</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface-0:#ffffff; --surface-1:#fbfbf9; --surface-2:#f4f4f1; --surface-3:#ecebe7;
+  --border:#e2e1db; --border-strong:#cfcec7;
+  --text-primary:#14140f; --text-secondary:#56554e; --text-muted:#8d8c83;
+  --male:#2a78d6; --female:#e87ba4; --unknown:#8d8c83;
+  --male-fill:#dee9f8; --female-fill:#fbebf1; --unknown-fill:#ececeb;
+  --accent:#14140f;
+  --shadow:0 1px 2px rgba(20,20,15,.06), 0 8px 24px rgba(20,20,15,.07);
+}
+@supports (color: color-mix(in oklab, red, blue)){
+  :root{
+    --male-fill:color-mix(in oklab, var(--male) 15%, var(--surface-0));
+    --female-fill:color-mix(in oklab, var(--female) 17%, var(--surface-0));
+    --unknown-fill:color-mix(in oklab, var(--unknown) 13%, var(--surface-0));
+  }
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --surface-0:#141413; --surface-1:#1a1a19; --surface-2:#232321; --surface-3:#2c2c29;
+    --border:#33332f; --border-strong:#46453f;
+    --text-primary:#f7f7f4; --text-secondary:#b4b3a9; --text-muted:#7c7b73;
+    --male:#3987e5; --female:#d55181; --unknown:#7c7b73;
+    --male-fill:#1d2c3e; --female-fill:#3a2029; --unknown-fill:#26262a;
+    --accent:#f7f7f4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.34);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#141413; --surface-1:#1a1a19; --surface-2:#232321; --surface-3:#2c2c29;
+  --border:#33332f; --border-strong:#46453f;
+  --text-primary:#f7f7f4; --text-secondary:#b4b3a9; --text-muted:#7c7b73;
+  --male:#3987e5; --female:#d55181; --unknown:#7c7b73;
+  --male-fill:#1d2c3e; --female-fill:#3a2029; --unknown-fill:#26262a;
+  --accent:#f7f7f4;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.34);
+}
+@supports (color: color-mix(in oklab, red, blue)){
+  :root[data-theme="dark"], :root:where(:not([data-theme="light"])){
+    --male-fill:color-mix(in oklab, var(--male) 26%, var(--surface-1));
+    --female-fill:color-mix(in oklab, var(--female) 26%, var(--surface-1));
+    --unknown-fill:color-mix(in oklab, var(--unknown) 22%, var(--surface-1));
+  }
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--surface-1); color:var(--text-primary);
+  font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* ---------- chrome ---------- */
+header{
+  padding:11px 18px; border-bottom:1px solid var(--border); background:var(--surface-1);
+  display:flex; gap:14px; align-items:center; flex-wrap:wrap; flex:none; z-index:3;
+}
+h1{font-size:14.5px; font-weight:640; margin:0; letter-spacing:-.015em; white-space:nowrap}
+.stats{color:var(--text-muted); font-size:12px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.controls{display:flex; gap:7px; align-items:center; margin-left:auto; flex-wrap:wrap}
+.field{position:relative; display:flex; align-items:center}
+.field svg{position:absolute; left:9px; width:13px; height:13px; color:var(--text-muted); pointer-events:none}
+input[type=search]{
+  font:inherit; font-size:13px; padding:6px 10px 6px 27px; border-radius:8px; width:194px;
+  border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary);
+  transition:border-color .12s, background .12s;
+}
+input[type=search]:focus{outline:none; border-color:var(--border-strong); background:var(--surface-0)}
+select,button{
+  font:inherit; font-size:13px; padding:6px 11px; border-radius:8px; cursor:pointer;
+  border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary);
+  transition:background .12s, border-color .12s, color .12s;
+}
+select:hover,button:hover{background:var(--surface-3); border-color:var(--border-strong)}
+button[aria-pressed=true]{background:var(--text-primary); color:var(--surface-1); border-color:var(--text-primary)}
+
+main{flex:1; display:flex; min-height:0; position:relative}
+#graph{flex:1; min-width:0; position:relative}
+svg{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
+svg.dragging{cursor:grabbing}
+
+/* ---------- graph marks ---------- */
+.genline{stroke:var(--border); stroke-width:1; stroke-dasharray:1 7; opacity:.85}
+.genlabel{
+  font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  fill:var(--text-muted); opacity:.75;
+}
+.link{fill:none; stroke:var(--border-strong); stroke-opacity:.62; transition:stroke-opacity .25s}
+.link.spouse{stroke-dasharray:2.5 3.5; stroke-opacity:.5}
+.node{cursor:pointer}
+/* Colour lives in CSS. getComputedStyle on a custom property returns an
+   unresolved token stream (var() inside color-mix), which is invalid as an SVG
+   fill attribute — so classes, not attribute writes. Theme switching is free. */
+.by-sex .node.s-m circle{fill:var(--male-fill);   stroke:var(--male)}
+.by-sex .node.s-f circle{fill:var(--female-fill); stroke:var(--female)}
+.by-sex .node.s-u circle{fill:var(--unknown-fill);stroke:var(--unknown)}
+.by-lineage .node.l-0 circle{fill:var(--male-fill);   stroke:var(--male)}
+.by-lineage .node.l-1 circle{fill:var(--female-fill); stroke:var(--female)}
+.by-lineage .node.l-2 circle{fill:var(--unknown-fill);stroke:var(--unknown)}
+.chip i.s-m{background:var(--male-fill);   border:1.4px solid var(--male)}
+.chip i.s-f{background:var(--female-fill); border:1.4px solid var(--female)}
+.chip i.s-u{background:var(--unknown-fill);border:1.4px solid var(--unknown)}
+.legend i.l-0{background:var(--male-fill);   border-color:var(--male)}
+.legend i.l-1{background:var(--female-fill); border-color:var(--female)}
+.legend i.l-2{background:var(--unknown-fill);border-color:var(--unknown)}
+.node circle{
+  stroke-width:1.75;
+  transition:r .18s cubic-bezier(.34,1.3,.64,1), stroke-width .18s, opacity .25s, filter .18s;
+}
+.node text{
+  font-size:11px; font-weight:480; letter-spacing:-.005em; pointer-events:none;
+  paint-order:stroke; stroke:var(--surface-1); stroke-width:3.5px; stroke-linejoin:round;
+  transition:fill .25s, opacity .25s;
+}
+.node.living  text{fill:var(--text-primary)}
+.node.deceased text{fill:var(--text-muted); font-weight:440}
+.node.deceased circle{opacity:.82}
+.node:hover circle{filter:drop-shadow(0 0 7px rgba(0,0,0,.2))}
+.node.sel circle{stroke:var(--accent); stroke-width:2.75}
+.node.sel text{fill:var(--text-primary); font-weight:660}
+.node.hl circle{stroke-width:2.4}
+.dim{opacity:.1}
+.dim text{opacity:.45}
+
+/* ---------- panel ---------- */
+aside{
+  width:326px; flex:none; border-left:1px solid var(--border); background:var(--surface-2);
+  overflow-y:auto; padding:18px; scrollbar-width:thin;
+}
+aside h2{font-size:17px; margin:0 0 1px; letter-spacing:-.02em; line-height:1.25}
+.telugu{font-size:16px; color:var(--text-secondary); margin:2px 0 11px}
+.badges{margin-bottom:10px; display:flex; gap:5px; flex-wrap:wrap}
+.badge{
+  font-size:10.5px; padding:2.5px 8px; border-radius:20px; font-weight:520;
+  border:1px solid var(--border-strong); color:var(--text-secondary); background:var(--surface-1);
+}
+.badge.warn{border-color:var(--female); color:var(--female)}
+.badge.sex{border:none; padding:3px 9px}
+.badge.male{background:var(--male-fill); color:var(--male)}
+.badge.female{background:var(--female-fill); color:var(--female)}
+dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:13px}
+dt{color:var(--text-muted)}
+dd{margin:0}
+.sect{margin-top:14px; padding-top:12px; border-top:1px solid var(--border)}
+.sect h3{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted);
+  margin:0 0 5px; font-weight:640;
+}
+.sect + .sect{margin-top:12px}
+.people-list{display:flex; flex-wrap:wrap; gap:4px}
+.chip{
+  font-size:12.5px; padding:3px 9px; border-radius:7px; cursor:pointer; background:var(--surface-1);
+  border:1px solid var(--border); color:var(--text-primary); transition:border-color .12s, background .12s;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.chip:hover{border-color:var(--border-strong); background:var(--surface-3)}
+.chip i{width:7px; height:7px; border-radius:50%; flex:none}
+.chip.gone{color:var(--text-muted)}
+.bio{font-size:13.5px; line-height:1.6; color:var(--text-secondary)}
+.bio h3,.bio h4{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted);
+  margin:13px 0 5px; font-weight:640;
+}
+.bio h3:first-child{margin-top:0}
+.bio p{margin:0 0 9px}
+.bio blockquote{
+  margin:10px 0; padding:2px 0 2px 12px; border-left:2px solid var(--border-strong); font-style:italic;
+}
+.empty{color:var(--text-muted); font-size:12.5px; font-style:italic}
+.hint{color:var(--text-muted); font-size:12.5px; line-height:1.6}
+kbd{
+  font:inherit; font-size:11px; padding:1px 5px; border-radius:4px;
+  border:1px solid var(--border-strong); background:var(--surface-1); color:var(--text-secondary);
+}
+
+footer{
+  padding:9px 18px; border-top:1px solid var(--border); background:var(--surface-1);
+  display:flex; gap:16px; align-items:center; flex-wrap:wrap; flex:none; z-index:3;
+}
+.legend{display:flex; gap:13px; align-items:center; flex-wrap:wrap; font-size:12px; color:var(--text-secondary)}
+.legend i{
+  display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px;
+  vertical-align:-1px; border:1.6px solid;
+}
+.legend .m{background:var(--male-fill); border-color:var(--male)}
+.legend .f{background:var(--female-fill); border-color:var(--female)}
+.legend .d{background:var(--unknown-fill); border-color:var(--unknown); opacity:.8}
+
+#tableView{display:none; flex:1; overflow:auto; padding:18px}
+table{border-collapse:collapse; width:100%; font-size:13px}
+th,td{text-align:left; padding:7px 11px; border-bottom:1px solid var(--border); vertical-align:top}
+th{position:sticky; top:0; background:var(--surface-1); font-weight:620; color:var(--text-secondary)}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+td.gone{color:var(--text-muted)}
+
+.tooltip{
+  position:fixed; pointer-events:none; z-index:10; background:var(--surface-0);
+  border:1px solid var(--border); border-radius:9px; padding:8px 11px; font-size:12.5px;
+  box-shadow:var(--shadow); max-width:250px; opacity:0; transition:opacity .12s;
+}
+.tooltip b{font-weight:620}
+.tooltip .sub{color:var(--text-muted); font-size:11.5px}
+
+@media (max-width:860px){ aside{display:none} input[type=search]{width:128px} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Suhas Family Tree</h1>
+  <span class="stats" id="stats"></span>
+  <div class="controls">
+    <span class="field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input type="search" id="search" placeholder="Find a person…" aria-label="Find a person">
+    </span>
+    <select id="colorBy" aria-label="Colour nodes by">
+      <option value="sex">Colour: male / female</option>
+      <option value="lineage">Colour: lineage</option>
+    </select>
+    <button id="fitBtn">Fit</button>
+    <button id="viewBtn" aria-pressed="false">Table</button>
+    <button id="themeBtn" aria-label="Toggle dark mode">Theme</button>
+  </div>
+</header>
+
+<main>
+  <div id="graph"><svg></svg></div>
+  <div id="tableView"></div>
+  <aside id="panel"></aside>
+</main>
+
+<footer>
+  <div class="legend" id="legend"></div>
+  <span class="hint">Drag to pan · scroll to zoom · click a person for their details</span>
+</footer>
+
+<div class="tooltip" id="tip"></div>
+
+<script>
+/* No libraries: the layout engine lives here so the archive still renders in 2040
+   with no network. 65 nodes is ~2k comparisons a tick — nothing. */
+const DATA = {"nodes":[{"id":"lakshmidevamma-kolachina","name":"Lakshmidevamma Kolachina","telugu":"లక్ష్మీదేవమ్మ","marriedName":"","sex":"F","gen":0,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":["Surname is her married name; birth surname not recorded on the chart."],"bio":"<h3>Lakshmidevamma Kolachina</h3><h4>Life</h4><h4>What people remember</h4>","childOf":null,"parents":[],"children":["venkata-krishnayya-kolachina"],"partners":["ramayya-kolachina"],"siblings":[]},{"id":"ramayya-kolachina","name":"Ramayya Kolachina","telugu":"రామయ్య","marriedName":"","sex":"M","gen":0,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"Vishvamitra / Daivasravasa / Daivatarasa (Kamakayana)","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"<h3>Ramayya Kolachina</h3><h4>Life</h4><h4>What people remember</h4>","childOf":null,"parents":[],"children":["venkata-krishnayya-kolachina"],"partners":["lakshmidevamma-kolachina"],"siblings":[]},{"id":"chellamma-kolachina","name":"Chellamma Kolachina","telugu":"ఐ. చెల్లమ్మ","marriedName":"","sex":"F","gen":1,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":["Chart shows an initial before the name (ఐ. — possibly a birth surname). Unresolved.","UNVERIFIED (med confidence): read from source, not yet confirmed by a family member."],"bio":"<h3>Chellamma Kolachina</h3><h4>Life</h4><h4>What people remember</h4>","childOf":null,"parents":[],"children":["rama-subbaraya-sastri-kolachina"],"partners":["venkata-krishnayya-kolachina"],"siblings":[]},{"id":"venkata-krishnayya-kolachina","name":"Venkata Krishnayya Kolachina","telugu":"వెంకట కృష్ణయ్య","marriedName":"","sex":"M","gen":1,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"Vishvamitra / Daivasravasa / Daivatarasa (Kamakayana)","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"<h3>Venkata Krishnayya Kolachina</h3><h4>Life</h4><h4>What people remember</h4>","childOf":"u-lakshmidevamma-kolachina--ramayya-kolachina","parents":["lakshmidevamma-kolachina","ramayya-kolachina"],"children":["rama-subbaraya-sastri-kolachina"],"partners":["chellamma-kolachina"],"siblings":[]},{"id":"lakshmidevi-kolachina","name":"Lakshmidevi Kolachina","telugu":"","marriedName":"","sex":"F","gen":2,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"],"partners":["rama-subbaraya-sastri-kolachina"],"siblings":[]},{"id":"rama-subbaraya-sastri-kolachina","name":"Rama Subbaraya Sastri Kolachina","telugu":"రామ సుబ్బారాయ శాస్త్రి","marriedName":"","sex":"M","gen":2,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"Vishvamitra / Daivasravasa / Daivatarasa (Kamakayana)","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"<h3>Rama Subbaraya Sastri Kolachina</h3><h4>Life</h4><h4>What people remember</h4>","childOf":"u-chellamma-kolachina--venkata-krishnayya-kolachina","parents":["chellamma-kolachina","venkata-krishnayya-kolachina"],"children":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"],"partners":["lakshmidevi-kolachina"],"siblings":[]},{"id":"alivelu-manga-kolachina","name":"Alivelu Manga Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["srimannarayana-murthi-paidimatri"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"anand-akella","name":"Anand Akella","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["bhagyalakshmi-kolachina"],"siblings":[]},{"id":"bala-tripura-sundari-kolachina","name":"Bala Tripura Sundari Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":[],"siblings":["radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"bhagyalakshmi-kolachina","name":"Bhagyalakshmi Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["anand-akella"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"chiranjeevi-sastri-kolachina","name":"Chiranjeevi Sastri Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["lalita-kolachina"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"dharmasamvardhani-kolachina","name":"Dharmasamvardhani Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["n-v-prasad-chittoor"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"durga-prasad-kolachina","name":"Durga Prasad Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["jayasri-kolachina"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","narmada-kolachina"]},{"id":"hanumantha-rao-kolachina","name":"Hanumantha Rao Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["varalakshmi-kolachina"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"jayasri-kolachina","name":"Jayasri Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["durga-prasad-kolachina"],"siblings":[]},{"id":"kameswara-rao-vandamuri","name":"Kameswara Rao Vandamuri","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["lakshmi-chellamma-kolachina"],"siblings":[]},{"id":"lakshmi-chellamma-kolachina","name":"Lakshmi Chellamma Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["kameswara-rao-vandamuri"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"lalita-kolachina","name":"Lalita Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["chiranjeevi-sastri-kolachina"],"siblings":[]},{"id":"n-v-prasad-chittoor","name":"N. V. Prasad Chittoor","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["dharmasamvardhani-kolachina"],"siblings":[]},{"id":"naresh-kumar-annambhatla","name":"Naresh Kumar Annambhatla","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["narmada-kolachina"],"siblings":[]},{"id":"narmada-kolachina","name":"Narmada Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["naresh-kumar-annambhatla"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina"]},{"id":"prabhavati-rao-mantripragada","name":"Prabhavati Rao Mantripragada","telugu":"","marriedName":"Tamvada","sex":"F","gen":3,"lineage":"Married in","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"<h3>Prabhavati Rao Mantripragada</h3><h4>Life</h4><h4>What people remember</h4><h4>Open questions</h4><p>- Birth date unknown. - Marked deceased, but no death date recorded.</p>","childOf":null,"parents":[],"children":["surya-rao-tamvada","narsimha-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"],"partners":["subhadra-rao-tamvada"],"siblings":[]},{"id":"radha-krishna-kolachina","name":"Radha Krishna Kolachina","telugu":"","marriedName":"","sex":"","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":[],"siblings":["bala-tripura-sundari-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"ramamohana-rao-kolachina","name":"Ramamohana Rao Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["usharani-kolachina"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"saraswati-kolachina","name":"Saraswati Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["venkateswara-sarma-kolachina"],"siblings":[]},{"id":"sesharatnam-chanduri","name":"Sesharatnam Chanduri","telugu":"","marriedName":"Kolachina","sex":"F","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["srilakshmi-rao-kolachina","radhika-kolachina","padma-gayatri-kolachina","murali-kolachina"],"partners":["subrahmanyam-kolachina"],"siblings":[]},{"id":"srimannarayana-murthi-paidimatri","name":"Srimannarayana Murthi Paidimatri","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["alivelu-manga-kolachina"],"siblings":[]},{"id":"subhadra-rao-tamvada","name":"Subhadra Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Tamvada","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"<h3>Subhadra Rao Tamvada</h3><h4>Life</h4><h4>What people remember</h4><h4>Open questions</h4><p>- Birth date unknown. - Marked deceased, but no death date recorded.</p>","childOf":null,"parents":[],"children":["surya-rao-tamvada","narsimha-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"],"partners":["prabhavati-rao-mantripragada"],"siblings":[]},{"id":"subrahmanyam-kolachina","name":"Subrahmanyam Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":true,"living":false,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"Vishvamitra / Daivasravasa / Daivatarasa (Kamakayana)","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"<h3>Subrahmanyam Kolachina</h3><h4>Life</h4><p>Fourth of thirteen children of Rama Subbaraya Sastri and Lakshmidevi [S002].</p><p>Carries the Kolachina patriline's gotra — Vishvamitra / Daivasravasa / Daivatarasa (Kamakayana) — as recorded in the header of the 2009 chart for the line as a whole. Confirmed by Suhas, 2026-09-20 [S002].</p><p>He was alive in 2009, when the family descent chart was drawn — the chart records him without the <strong>కీ॥శే॥</strong> marking used for the deceased, and Suhas confirms it was made before his grandfather's death [S002].</p><h4>What people remember</h4>","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":["srilakshmi-rao-kolachina","radhika-kolachina","padma-gayatri-kolachina","murali-kolachina"],"partners":["sesharatnam-chanduri"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","venkateswara-sarma-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"usharani-kolachina","name":"Usharani Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["ramamohana-rao-kolachina"],"siblings":[]},{"id":"varalakshmi-kolachina","name":"Varalakshmi Kolachina","telugu":"","marriedName":"","sex":"F","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["hanumantha-rao-kolachina"],"siblings":[]},{"id":"venkateswara-sarma-kolachina","name":"Venkateswara Sarma Kolachina","telugu":"","marriedName":"","sex":"M","gen":3,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":["S002"],"notes":[],"bio":"","childOf":"u-lakshmidevi-kolachina--rama-subbaraya-sastri-kolachina","redacted":true,"parents":["lakshmidevi-kolachina","rama-subbaraya-sastri-kolachina"],"children":[],"partners":["saraswati-kolachina"],"siblings":["bala-tripura-sundari-kolachina","radha-krishna-kolachina","lakshmi-chellamma-kolachina","subrahmanyam-kolachina","alivelu-manga-kolachina","hanumantha-rao-kolachina","ramamohana-rao-kolachina","dharmasamvardhani-kolachina","bhagyalakshmi-kolachina","chiranjeevi-sastri-kolachina","durga-prasad-kolachina","narmada-kolachina"]},{"id":"janaki-putrevu","name":"Janaki Putrevu","telugu":"","marriedName":"Tamvada","sex":"F","gen":4,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["prabha-tamvada","subhashini-tamvada"],"partners":["laxman-rao-tamvada"],"siblings":[]},{"id":"kalyanram-dronamraju","name":"KalyanRam Dronamraju","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["sridhar-dronamraju","srikant-dronamraju"],"partners":["krishna-kumari-tamvada"],"siblings":[]},{"id":"krishna-kumari-tamvada","name":"Krishna Kumari Tamvada","telugu":"","marriedName":"Dronamraju","sex":"F","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":["sridhar-dronamraju","srikant-dronamraju"],"partners":["kalyanram-dronamraju"],"siblings":["surya-rao-tamvada","narsimha-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","subbalakshmi-tamvada"]},{"id":"laxman-rao-tamvada","name":"Laxman Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":["prabha-tamvada","subhashini-tamvada"],"partners":["janaki-putrevu"],"siblings":["surya-rao-tamvada","narsimha-rao-tamvada","mohan-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"]},{"id":"malli-arjuna-sarma-s","name":"Malli Arjuna Sarma S.","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["padma-gayatri-kolachina"],"siblings":[]},{"id":"mohan-rao-tamvada","name":"Mohan Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":["kanthi-kiran-tamvada"],"partners":["vasantha-mantripragada"],"siblings":["surya-rao-tamvada","narsimha-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"]},{"id":"murali-kolachina","name":"Murali Kolachina","telugu":"","marriedName":"","sex":"","gen":4,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-sesharatnam-chanduri--subrahmanyam-kolachina","redacted":true,"parents":["sesharatnam-chanduri","subrahmanyam-kolachina"],"children":[],"partners":[],"siblings":["srilakshmi-rao-kolachina","radhika-kolachina","padma-gayatri-kolachina"]},{"id":"narsimha-rao-tamvada","name":"Narsimha Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":["vennela-rao-tamvada"],"partners":["usha-rao-tamvada"],"siblings":["surya-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"]},{"id":"narsimham-yadavalli","name":"Narsimham Yadavalli","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["anjali-yadavalli","aditya-subrmanyam-yadavalli"],"partners":["radhika-kolachina"],"siblings":[]},{"id":"padma-gayatri-kolachina","name":"Padma Gayatri Kolachina","telugu":"","marriedName":"","sex":"F","gen":4,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"med","sources":["S002"],"notes":[],"bio":"","childOf":"u-sesharatnam-chanduri--subrahmanyam-kolachina","redacted":true,"parents":["sesharatnam-chanduri","subrahmanyam-kolachina"],"children":[],"partners":["malli-arjuna-sarma-s"],"siblings":["srilakshmi-rao-kolachina","radhika-kolachina","murali-kolachina"]},{"id":"radhika-kolachina","name":"Radhika Kolachina","telugu":"","marriedName":"Yadavalli","sex":"F","gen":4,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-sesharatnam-chanduri--subrahmanyam-kolachina","redacted":true,"parents":["sesharatnam-chanduri","subrahmanyam-kolachina"],"children":["anjali-yadavalli","aditya-subrmanyam-yadavalli"],"partners":["narsimham-yadavalli"],"siblings":["srilakshmi-rao-kolachina","padma-gayatri-kolachina","murali-kolachina"]},{"id":"sridhara-nageswara-rao-kallakuri","name":"Sridhara Nageswara Rao Kallakuri","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Married in","deceased":true,"living":false,"birth":"5 MAR 1936","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"<h3>Sridhara Nageswara Rao Kallakuri</h3><h4>Life</h4><h4>What people remember</h4><h4>Open questions</h4><p>- Birthplace unknown. - Marked deceased, but no death date recorded.</p>","childOf":null,"parents":[],"children":[],"partners":["subbalakshmi-tamvada"],"siblings":[]},{"id":"srilakshmi-rao-kolachina","name":"Srilakshmi Rao Kolachina","telugu":"","marriedName":"Tamvada","sex":"F","gen":4,"lineage":"Kolachina","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-sesharatnam-chanduri--subrahmanyam-kolachina","redacted":true,"parents":["sesharatnam-chanduri","subrahmanyam-kolachina"],"children":["suhas-rao-tamvada","sharath-rao-tamvada"],"partners":["surya-rao-tamvada"],"siblings":["radhika-kolachina","padma-gayatri-kolachina","murali-kolachina"]},{"id":"subbalakshmi-tamvada","name":"Subbalakshmi Tamvada","telugu":"","marriedName":"Kallakuri","sex":"F","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":[],"partners":["sridhara-nageswara-rao-kallakuri"],"siblings":["surya-rao-tamvada","narsimha-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada"]},{"id":"surya-rao-tamvada","name":"Surya Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-prabhavati-rao-mantripragada--subhadra-rao-tamvada","redacted":true,"parents":["prabhavati-rao-mantripragada","subhadra-rao-tamvada"],"children":["suhas-rao-tamvada","sharath-rao-tamvada"],"partners":["srilakshmi-rao-kolachina"],"siblings":["narsimha-rao-tamvada","mohan-rao-tamvada","laxman-rao-tamvada","krishna-kumari-tamvada","subbalakshmi-tamvada"]},{"id":"usha-rao-tamvada","name":"Usha Rao Tamvada","telugu":"","marriedName":"","sex":"F","gen":4,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["vennela-rao-tamvada"],"partners":["narsimha-rao-tamvada"],"siblings":[]},{"id":"vasantha-mantripragada","name":"Vasantha Mantripragada","telugu":"","marriedName":"Tamvada","sex":"F","gen":4,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["kanthi-kiran-tamvada"],"partners":["mohan-rao-tamvada"],"siblings":[]},{"id":"aditya-subrmanyam-yadavalli","name":"Aditya Subrmanyam Yadavalli","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-narsimham-yadavalli--radhika-kolachina","redacted":true,"parents":["narsimham-yadavalli","radhika-kolachina"],"children":[],"partners":[],"siblings":["anjali-yadavalli"]},{"id":"anjali-yadavalli","name":"Anjali Yadavalli","telugu":"","marriedName":"","sex":"F","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-narsimham-yadavalli--radhika-kolachina","redacted":true,"parents":["narsimham-yadavalli","radhika-kolachina"],"children":[],"partners":[],"siblings":["aditya-subrmanyam-yadavalli"]},{"id":"aparna-kothapalli","name":"Aparna Kothapalli","telugu":"","marriedName":"Dronamraju","sex":"F","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["neel-dronamraju"],"partners":["srikant-dronamraju"],"siblings":[]},{"id":"harika-kavalipati","name":"Harika Kavalipati","telugu":"","marriedName":"Tamvada","sex":"F","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":[],"partners":["kanthi-kiran-tamvada"],"siblings":[]},{"id":"kanthi-kiran-tamvada","name":"Kanthi Kiran Tamvada","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-mohan-rao-tamvada--vasantha-mantripragada","redacted":true,"parents":["mohan-rao-tamvada","vasantha-mantripragada"],"children":[],"partners":["harika-kavalipati"],"siblings":[]},{"id":"lata-ahuja","name":"Lata Ahuja","telugu":"","marriedName":"Dronamraju","sex":"F","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":null,"redacted":true,"parents":[],"children":["siona-dronamraju","rian-dronamraju"],"partners":["sridhar-dronamraju"],"siblings":[]},{"id":"prabha-tamvada","name":"Prabha Tamvada","telugu":"","marriedName":"Mangu","sex":"F","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-janaki-putrevu--laxman-rao-tamvada","redacted":true,"parents":["janaki-putrevu","laxman-rao-tamvada"],"children":[],"partners":[],"siblings":["subhashini-tamvada"]},{"id":"sharath-rao-tamvada","name":"Sharath Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-srilakshmi-rao-kolachina--surya-rao-tamvada","redacted":true,"parents":["srilakshmi-rao-kolachina","surya-rao-tamvada"],"children":[],"partners":[],"siblings":["suhas-rao-tamvada"]},{"id":"sridhar-dronamraju","name":"Sridhar Dronamraju","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-kalyanram-dronamraju--krishna-kumari-tamvada","redacted":true,"parents":["kalyanram-dronamraju","krishna-kumari-tamvada"],"children":["siona-dronamraju","rian-dronamraju"],"partners":["lata-ahuja"],"siblings":["srikant-dronamraju"]},{"id":"srikant-dronamraju","name":"Srikant Dronamraju","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-kalyanram-dronamraju--krishna-kumari-tamvada","redacted":true,"parents":["kalyanram-dronamraju","krishna-kumari-tamvada"],"children":["neel-dronamraju"],"partners":["aparna-kothapalli"],"siblings":["sridhar-dronamraju"]},{"id":"subhashini-tamvada","name":"Subhashini Tamvada","telugu":"","marriedName":"Mannava","sex":"F","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-janaki-putrevu--laxman-rao-tamvada","redacted":true,"parents":["janaki-putrevu","laxman-rao-tamvada"],"children":[],"partners":[],"siblings":["prabha-tamvada"]},{"id":"suhas-rao-tamvada","name":"Suhas Rao Tamvada","telugu":"","marriedName":"","sex":"M","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-srilakshmi-rao-kolachina--surya-rao-tamvada","redacted":true,"parents":["srilakshmi-rao-kolachina","surya-rao-tamvada"],"children":[],"partners":[],"siblings":["sharath-rao-tamvada"]},{"id":"vennela-rao-tamvada","name":"Vennela Rao Tamvada","telugu":"","marriedName":"","sex":"F","gen":5,"lineage":"Tamvada","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-narsimha-rao-tamvada--usha-rao-tamvada","redacted":true,"parents":["narsimha-rao-tamvada","usha-rao-tamvada"],"children":[],"partners":[],"siblings":[]},{"id":"neel-dronamraju","name":"Neel Dronamraju","telugu":"","marriedName":"","sex":"M","gen":6,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-aparna-kothapalli--srikant-dronamraju","redacted":true,"parents":["aparna-kothapalli","srikant-dronamraju"],"children":[],"partners":[],"siblings":[]},{"id":"rian-dronamraju","name":"Rian Dronamraju","telugu":"","marriedName":"","sex":"M","gen":6,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-lata-ahuja--sridhar-dronamraju","redacted":true,"parents":["lata-ahuja","sridhar-dronamraju"],"children":[],"partners":[],"siblings":["siona-dronamraju"]},{"id":"siona-dronamraju","name":"Siona Dronamraju","telugu":"","marriedName":"","sex":"F","gen":6,"lineage":"Married in","deceased":false,"living":true,"birth":"","birthPlace":"","death":"","deathPlace":"","gotra":"","nativePlace":"","occupation":"","photoAlbum":"","confidence":"high","sources":[],"notes":[],"bio":"","childOf":"u-lata-ahuja--sridhar-dronamraju","redacted":true,"parents":["lata-ahuja","sridhar-dronamraju"],"children":[],"partners":[],"siblings":["rian-dronamraju"]}],"links":[{"source":"alivelu-manga-kolachina","target":"srimannarayana-murthi-paidimatri","type":"spouse"},{"source":"anand-akella","target":"bhagyalakshmi-kolachina","type":"spouse"},{"source":"aparna-kothapalli","target":"srikant-dronamraju","type":"spouse"},{"source":"aparna-kothapalli","target":"neel-dronamraju","type":"parent"},{"source":"srikant-dronamraju","target":"neel-dronamraju","type":"parent"},{"source":"chellamma-kolachina","target":"venkata-krishnayya-kolachina","type":"spouse"},{"source":"chellamma-kolachina","target":"rama-subbaraya-sastri-kolachina","type":"parent"},{"source":"venkata-krishnayya-kolachina","target":"rama-subbaraya-sastri-kolachina","type":"parent"},{"source":"chiranjeevi-sastri-kolachina","target":"lalita-kolachina","type":"spouse"},{"source":"dharmasamvardhani-kolachina","target":"n-v-prasad-chittoor","type":"spouse"},{"source":"durga-prasad-kolachina","target":"jayasri-kolachina","type":"spouse"},{"source":"hanumantha-rao-kolachina","target":"varalakshmi-kolachina","type":"spouse"},{"source":"harika-kavalipati","target":"kanthi-kiran-tamvada","type":"spouse"},{"source":"janaki-putrevu","target":"laxman-rao-tamvada","type":"spouse"},{"source":"janaki-putrevu","target":"prabha-tamvada","type":"parent"},{"source":"laxman-rao-tamvada","target":"prabha-tamvada","type":"parent"},{"source":"janaki-putrevu","target":"subhashini-tamvada","type":"parent"},{"source":"laxman-rao-tamvada","target":"subhashini-tamvada","type":"parent"},{"source":"kalyanram-dronamraju","target":"krishna-kumari-tamvada","type":"spouse"},{"source":"kalyanram-dronamraju","target":"sridhar-dronamraju","type":"parent"},{"source":"krishna-kumari-tamvada","target":"sridhar-dronamraju","type":"parent"},{"source":"kalyanram-dronamraju","target":"srikant-dronamraju","type":"parent"},{"source":"krishna-kumari-tamvada","target":"srikant-dronamraju","type":"parent"},{"source":"kameswara-rao-vandamuri","target":"lakshmi-chellamma-kolachina","type":"spouse"},{"source":"lakshmidevamma-kolachina","target":"ramayya-kolachina","type":"spouse"},{"source":"lakshmidevamma-kolachina","target":"venkata-krishnayya-kolachina","type":"parent"},{"source":"ramayya-kolachina","target":"venkata-krishnayya-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"rama-subbaraya-sastri-kolachina","type":"spouse"},{"source":"lakshmidevi-kolachina","target":"bala-tripura-sundari-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"bala-tripura-sundari-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"radha-krishna-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"radha-krishna-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"lakshmi-chellamma-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"lakshmi-chellamma-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"subrahmanyam-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"subrahmanyam-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"venkateswara-sarma-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"venkateswara-sarma-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"alivelu-manga-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"alivelu-manga-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"hanumantha-rao-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"hanumantha-rao-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"ramamohana-rao-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"ramamohana-rao-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"dharmasamvardhani-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"dharmasamvardhani-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"bhagyalakshmi-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"bhagyalakshmi-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"chiranjeevi-sastri-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"chiranjeevi-sastri-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"durga-prasad-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"durga-prasad-kolachina","type":"parent"},{"source":"lakshmidevi-kolachina","target":"narmada-kolachina","type":"parent"},{"source":"rama-subbaraya-sastri-kolachina","target":"narmada-kolachina","type":"parent"},{"source":"lata-ahuja","target":"sridhar-dronamraju","type":"spouse"},{"source":"lata-ahuja","target":"siona-dronamraju","type":"parent"},{"source":"sridhar-dronamraju","target":"siona-dronamraju","type":"parent"},{"source":"lata-ahuja","target":"rian-dronamraju","type":"parent"},{"source":"sridhar-dronamraju","target":"rian-dronamraju","type":"parent"},{"source":"malli-arjuna-sarma-s","target":"padma-gayatri-kolachina","type":"spouse"},{"source":"mohan-rao-tamvada","target":"vasantha-mantripragada","type":"spouse"},{"source":"mohan-rao-tamvada","target":"kanthi-kiran-tamvada","type":"parent"},{"source":"vasantha-mantripragada","target":"kanthi-kiran-tamvada","type":"parent"},{"source":"naresh-kumar-annambhatla","target":"narmada-kolachina","type":"spouse"},{"source":"narsimha-rao-tamvada","target":"usha-rao-tamvada","type":"spouse"},{"source":"narsimha-rao-tamvada","target":"vennela-rao-tamvada","type":"parent"},{"source":"usha-rao-tamvada","target":"vennela-rao-tamvada","type":"parent"},{"source":"narsimham-yadavalli","target":"radhika-kolachina","type":"spouse"},{"source":"narsimham-yadavalli","target":"anjali-yadavalli","type":"parent"},{"source":"radhika-kolachina","target":"anjali-yadavalli","type":"parent"},{"source":"narsimham-yadavalli","target":"aditya-subrmanyam-yadavalli","type":"parent"},{"source":"radhika-kolachina","target":"aditya-subrmanyam-yadavalli","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"subhadra-rao-tamvada","type":"spouse"},{"source":"prabhavati-rao-mantripragada","target":"surya-rao-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"surya-rao-tamvada","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"narsimha-rao-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"narsimha-rao-tamvada","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"mohan-rao-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"mohan-rao-tamvada","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"laxman-rao-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"laxman-rao-tamvada","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"krishna-kumari-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"krishna-kumari-tamvada","type":"parent"},{"source":"prabhavati-rao-mantripragada","target":"subbalakshmi-tamvada","type":"parent"},{"source":"subhadra-rao-tamvada","target":"subbalakshmi-tamvada","type":"parent"},{"source":"ramamohana-rao-kolachina","target":"usharani-kolachina","type":"spouse"},{"source":"saraswati-kolachina","target":"venkateswara-sarma-kolachina","type":"spouse"},{"source":"sesharatnam-chanduri","target":"subrahmanyam-kolachina","type":"spouse"},{"source":"sesharatnam-chanduri","target":"srilakshmi-rao-kolachina","type":"parent"},{"source":"subrahmanyam-kolachina","target":"srilakshmi-rao-kolachina","type":"parent"},{"source":"sesharatnam-chanduri","target":"radhika-kolachina","type":"parent"},{"source":"subrahmanyam-kolachina","target":"radhika-kolachina","type":"parent"},{"source":"sesharatnam-chanduri","target":"padma-gayatri-kolachina","type":"parent"},{"source":"subrahmanyam-kolachina","target":"padma-gayatri-kolachina","type":"parent"},{"source":"sesharatnam-chanduri","target":"murali-kolachina","type":"parent"},{"source":"subrahmanyam-kolachina","target":"murali-kolachina","type":"parent"},{"source":"sridhara-nageswara-rao-kallakuri","target":"subbalakshmi-tamvada","type":"spouse"},{"source":"srilakshmi-rao-kolachina","target":"surya-rao-tamvada","type":"spouse"},{"source":"srilakshmi-rao-kolachina","target":"suhas-rao-tamvada","type":"parent"},{"source":"surya-rao-tamvada","target":"suhas-rao-tamvada","type":"parent"},{"source":"srilakshmi-rao-kolachina","target":"sharath-rao-tamvada","type":"parent"},{"source":"surya-rao-tamvada","target":"sharath-rao-tamvada","type":"parent"}],"meta":{"generated":"2026-09-20","public":true,"root":"suhas-rao-tamvada","counts":{"people":65,"unions":26,"generations":7}}};
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let view = { k: 1, x: 0, y: 0 };   // declared early: render() runs before the pan/zoom block
+let selected = null;
+const nodes = DATA.nodes, byId = new Map(nodes.map(n => [n.id, n]));
+const links = DATA.links.map(l => ({...l, source: byId.get(l.source), target: byId.get(l.target)}))
+                        .filter(l => l.source && l.target);
+const maxGen = Math.max(0, (DATA.meta.counts.generations || 1) - 1);
+const LINEAGES = ["Tamvada","Kolachina","Married in"];
+
+document.getElementById("stats").textContent =
+  `${nodes.length} people · ${DATA.meta.counts.unions} unions · ${maxGen + 1} generations`
+  + (DATA.meta.public ? " · public" : "");
+
+/* ---------- adjacency ---------- */
+const parents = new Map(), children = new Map(), neigh = new Map();
+const push = (m, k, v) => { if (!m.has(k)) m.set(k, []); m.get(k).push(v); };
+for (const l of links) {
+  push(neigh, l.source.id, l.target.id); push(neigh, l.target.id, l.source.id);
+  if (l.type !== "parent") continue;
+  push(children, l.source.id, l.target.id); push(parents, l.target.id, l.source.id);
+}
+function reach(id, map) {
+  const seen = new Set(), q = [id];
+  while (q.length) for (const y of (map.get(q.pop()) || [])) if (!seen.has(y)) { seen.add(y); q.push(y); }
+  return seen;
+}
+for (const n of nodes) n.deg = (neigh.get(n.id) || []).length;
+
+/* ---------- colour ---------- */
+let colorBy = "sex";
+
+
+/* ---------- svg scaffold ---------- */
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.querySelector("#graph svg");   // NOT the header search icon
+const root = document.createElementNS(NS, "g");
+const guideG = document.createElementNS(NS, "g");
+const linkG  = document.createElementNS(NS, "g");
+const nodeG  = document.createElementNS(NS, "g");
+root.append(guideG, linkG, nodeG); svg.append(root);
+
+const guides = [];
+for (let g = 0; g <= maxGen; g++) {
+  const line = document.createElementNS(NS, "line"); line.setAttribute("class", "genline");
+  const lab = document.createElementNS(NS, "text"); lab.setAttribute("class", "genlabel");
+  lab.textContent = "Gen " + (g + 1);
+  guideG.append(line, lab); guides.push({ line, lab, g });
+}
+
+const linkEls = links.map(l => {
+  const e = document.createElementNS(NS, "path");
+  e.setAttribute("class", "link " + l.type);
+  e.setAttribute("stroke-width", l.type === "spouse" ? 1.4 : 1.7);
+  linkG.append(e); return e;
+});
+
+const R = n => 6 + Math.min(5, Math.sqrt(n.deg) * 1.6);
+const nodeEls = nodes.map(n => {
+  const g = document.createElementNS(NS, "g");
+  const sc = n.sex === "M" ? "s-m" : n.sex === "F" ? "s-f" : "s-u";
+  const lc = "l-" + Math.max(0, LINEAGES.indexOf(n.lineage));
+  g.setAttribute("class", `node ${n.deceased ? "deceased" : "living"} ${sc} ${lc}`);
+  const c = document.createElementNS(NS, "circle"); c.setAttribute("r", R(n));
+  const t = document.createElementNS(NS, "text");
+  t.setAttribute("x", R(n) + 5); t.setAttribute("y", 3.6);
+  t.textContent = n.name.length > 24 ? n.name.slice(0, 23) + "…" : n.name;
+  g.append(c, t); nodeG.append(g);
+  g.addEventListener("pointerdown", e => startDrag(e, n));
+  g.addEventListener("pointerenter", () => hover(n.id, true));
+  g.addEventListener("pointerleave", () => { hover(n.id, false); hideTip(); });
+  g.addEventListener("pointermove", e => showTip(e, n));
+  g.addEventListener("click", e => { e.stopPropagation(); select(n.id); });
+  return { g, c, t, n };
+});
+function paint() { svg.classList.remove("by-sex","by-lineage");
+  svg.classList.add(colorBy === "sex" ? "by-sex" : "by-lineage"); }
+
+/* ---------- layout ---------- */
+let W = 0, H = 0, alpha = 1;
+const TOP = 62, BOT = 74;
+const yFor = g => maxGen ? TOP + (H - TOP - BOT) * (g / maxGen) : H / 2;
+
+nodes.forEach((n, i) => { n.x = 400 + Math.cos(i * 2.399) * 200; n.y = yFor(n.gen); n.vx = n.vy = 0; });
+
+function tick() {
+  const cx = W / 2;
+  for (let i = 0; i < nodes.length; i++) {
+    const a = nodes[i];
+    for (let j = i + 1; j < nodes.length; j++) {
+      const b = nodes[j];
+      let dx = (a.x - b.x) * 0.5, dy = a.y - b.y;
+      let d2 = dx * dx + dy * dy;
+      if (d2 < 1e-4) { dx = Math.random() - .5; dy = Math.random() - .5; d2 = 1e-4; }
+      const d = Math.sqrt(d2);
+      let f = 5200 / d2;
+      if (d < 62) f += (62 - d) * 0.9;
+      const ux = dx / d, uy = dy / d;
+      a.vx += ux * f * 1.35; a.vy += uy * f;
+      b.vx -= ux * f * 1.35; b.vy -= uy * f;
+    }
+  }
+  for (const l of links) {
+    const rest = l.type === "spouse" ? 46 : 96, k = l.type === "spouse" ? 0.55 : 0.22;
+    const dx = l.target.x - l.source.x, dy = l.target.y - l.source.y;
+    const d = Math.hypot(dx, dy) || 1e-4, f = (d - rest) * k;
+    const ux = dx / d, uy = dy / d;
+    l.source.vx += ux * f; l.source.vy += uy * f;
+    l.target.vx -= ux * f; l.target.vy -= uy * f;
+  }
+  for (const n of nodes) {
+    n.vy += (yFor(n.gen) - n.y) * 0.85;
+    n.vx += (cx - n.x) * 0.02;
+    if (n.fx != null) { n.x = n.fx; n.y = n.fy; n.vx = n.vy = 0; continue; }
+    n.vx *= 0.72; n.vy *= 0.72;
+    n.x += n.vx * alpha; n.y += n.vy * alpha;
+  }
+  alpha = alpha > 0.02 ? alpha * 0.988 : 0;
+}
+
+function render() {
+  for (let i = 0; i < links.length; i++) {
+    const l = links[i], s = l.source, t = l.target;
+    // a gentle curve reads far better than a straight line in a dense graph
+    const mx = (s.x + t.x) / 2, my = (s.y + t.y) / 2;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const bow = l.type === "spouse" ? 0 : 0.14;
+    linkEls[i].setAttribute("d",
+      `M${s.x},${s.y} Q${mx - dy * bow},${my + dx * bow} ${t.x},${t.y}`);
+  }
+  for (const { g, n } of nodeEls) g.setAttribute("transform", `translate(${n.x},${n.y})`);
+  const x0 = -view.x / view.k, x1 = (W - view.x) / view.k;
+  for (const { line, lab, g } of guides) {
+    const y = yFor(g);
+    line.setAttribute("x1", x0); line.setAttribute("x2", x1);
+    line.setAttribute("y1", y); line.setAttribute("y2", y);
+    lab.setAttribute("x", x0 + 12 / view.k); lab.setAttribute("y", y - 7);
+    lab.setAttribute("font-size", 10 / view.k);
+  }
+}
+let fitted = false;
+(function loop() {
+  for (let i = 0; i < 2; i++) tick();
+  render();
+  if (!fitted && alpha === 0) { fitted = true; fit(); }
+  requestAnimationFrame(loop);
+})();
+
+/* ---------- pan / zoom ---------- */
+const applyView = () => root.setAttribute("transform", `translate(${view.x},${view.y}) scale(${view.k})`);
+window.fit = function fit() {
+  const pad = 52;
+  const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y);
+  const x0 = Math.min(...xs) - 12, x1 = Math.max(...xs) + 118;
+  const y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const k = Math.max(0.35, Math.min(1.35, Math.min((W - pad * 2) / (x1 - x0 || 1),
+                                                   (H - pad * 2) / (y1 - y0 || 1))));
+  view.k = k;
+  view.x = pad - x0 * k + (W - pad * 2 - (x1 - x0) * k) / 2;
+  view.y = pad - y0 * k + (H - pad * 2 - (y1 - y0) * k) / 2;   // centre vertically too
+  applyView();
+};
+svg.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = svg.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+  const k = Math.max(0.2, Math.min(4.5, view.k * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+  view.x = mx - (mx - view.x) * (k / view.k);
+  view.y = my - (my - view.y) * (k / view.k);
+  view.k = k; applyView();
+}, { passive: false });
+
+let panning = null, dragging = null;
+svg.addEventListener("pointerdown", e => {
+  if (e.target.closest(".node")) return;
+  panning = { x: e.clientX - view.x, y: e.clientY - view.y };
+  svg.classList.add("dragging");
+});
+addEventListener("pointermove", e => {
+  if (panning) { view.x = e.clientX - panning.x; view.y = e.clientY - panning.y; applyView(); }
+  if (dragging) {
+    const r = svg.getBoundingClientRect();
+    dragging.fx = (e.clientX - r.left - view.x) / view.k;
+    dragging.fy = (e.clientY - r.top - view.y) / view.k;
+    alpha = Math.max(alpha, 0.55);
+  }
+});
+addEventListener("pointerup", () => {
+  panning = null; svg.classList.remove("dragging");
+  if (dragging) { dragging.fx = dragging.fy = null; dragging = null; }
+});
+function startDrag(e, n) { e.stopPropagation(); dragging = n; n.fx = n.x; n.fy = n.y; }
+
+/* ---------- hover: light up immediate family ---------- */
+function hover(id, on) {
+  if (selected) return;
+  if (!on) { nodeEls.forEach(({ g }) => g.classList.remove("hl")); return;}
+  const near = new Set([id, ...(neigh.get(id) || [])]);
+  nodeEls.forEach(({ g, n }) => g.classList.toggle("hl", near.has(n.id)));
+}
+
+const tip = document.getElementById("tip");
+function showTip(e, d) {
+  tip.style.opacity = 1;
+  tip.style.left = Math.min(e.clientX + 15, innerWidth - 262) + "px";
+  tip.style.top = (e.clientY + 15) + "px";
+  const l2 = [d.birth && "b. " + d.birth, d.deceased ? (d.death ? "d. " + d.death : "deceased") : "living"]
+    .filter(Boolean).join(" · ");
+  tip.innerHTML = `<b>${esc(d.name)}</b>${d.telugu ? "<br>" + esc(d.telugu) : ""}`
+    + `<br><span class="sub">${esc(l2)}</span>`;
+}
+function hideTip() { tip.style.opacity = 0; }
+
+/* ---------- panel ---------- */
+const panel = document.getElementById("panel");
+const HINT = `<p class="hint">Click a person to see their life, their relatives and where
+  they sit in the tree. Their ancestors and descendants stay lit; everyone else dims.<br><br>
+  Vertical position is generation. Colour is <b>male</b> / <b>female</b>.
+  Deceased names are greyed.</p>`;
+
+function chip(pid) {
+  const p = byId.get(pid);
+  if (!p) return esc(pid);
+  const sc = p.sex === "M" ? "s-m" : p.sex === "F" ? "s-f" : "s-u";
+  return `<span class="chip${p.deceased ? " gone" : ""}" data-goto="${pid}">`
+       + `<i class="${sc}"></i>${esc(p.name)}</span>`;
+}
+const chips = ids => ids && ids.length
+  ? `<div class="people-list">${ids.map(chip).join("")}</div>`
+  : `<span class="empty">none recorded</span>`;
+
+function select(id, push = true) {
+  selected = id;
+  if (!id) {
+    nodeEls.forEach(({ g }) => g.classList.remove("dim", "sel", "hl"));
+    linkEls.forEach(e => e.classList.remove("dim"));
+    panel.innerHTML = HINT;
+    if (push && location.hash) history.replaceState(null, "", location.pathname);
+    return;
+  }
+  const d = byId.get(id);
+  if (!d) return;
+  if (push) history.replaceState(null, "", "#/person/" + id);
+
+  const lit = new Set([id, ...reach(id, parents), ...reach(id, children), ...(d.partners || [])]);
+  nodeEls.forEach(({ g, n }) => {
+    g.classList.toggle("dim", !lit.has(n.id));
+    g.classList.toggle("sel", n.id === id);
+    g.classList.remove("hl");
+  });
+  linkEls.forEach((e, i) => e.classList.toggle("dim",
+    !(lit.has(links[i].source.id) && lit.has(links[i].target.id))));
+
+  const rows = [];
+  const add = (k, v) => { if (v) rows.push(`<dt>${k}</dt><dd>${esc(v)}</dd>`); };
+  add("Born", [d.birth, d.birthPlace].filter(Boolean).join(", "));
+  add(d.deceased ? "Died" : "Status",
+      d.deceased ? ([d.death, d.deathPlace].filter(Boolean).join(", ") || "yes, date unknown") : "living");
+  add("Married name", d.marriedName);
+  add("Occupation", d.occupation);
+  add("Native place", d.nativePlace);
+  add("Gotra", d.gotra);
+  add("Generation", d.gen + 1);
+
+  const sexBadge = d.sex === "M" ? `<span class="badge sex male">male</span>`
+                 : d.sex === "F" ? `<span class="badge sex female">female</span>` : "";
+
+  panel.innerHTML =
+      `<h2>${esc(d.name)}</h2>`
+    + (d.telugu ? `<div class="telugu">${esc(d.telugu)}</div>` : "")
+    + `<div class="badges">${sexBadge}`
+    +   (d.deceased ? `<span class="badge">deceased</span>` : "")
+    +   (d.confidence !== "high" ? `<span class="badge warn">unverified reading</span>` : "")
+    +   (d.redacted ? `<span class="badge">details withheld — living</span>` : "")
+    + `</div>`
+    + (rows.length ? `<dl>${rows.join("")}</dl>` : "")
+    + `<div class="sect"><h3>Parents</h3>${chips(d.parents)}</div>`
+    + `<div class="sect"><h3>Partner${(d.partners || []).length > 1 ? "s" : ""}</h3>${chips(d.partners)}</div>`
+    + `<div class="sect"><h3>Children</h3>${chips(d.children)}</div>`
+    + `<div class="sect"><h3>Siblings</h3>${chips(d.siblings)}</div>`
+    + `<div class="sect"><h3>Life</h3>`
+    +   (d.bio ? `<div class="bio">${d.bio}</div>`
+              : `<span class="empty">Nothing written yet — add prose to people/${esc(d.id)}.md</span>`)
+    + `</div>`
+    + ((d.notes && d.notes.length)
+        ? `<div class="sect"><h3>Notes</h3><div class="bio">${d.notes.map(esc).join("<br><br>")}</div></div>` : "")
+    + ((d.sources && d.sources.length)
+        ? `<div class="sect"><h3>Sources</h3><span class="hint">${d.sources.map(esc).join(", ")}</span></div>` : "");
+}
+
+panel.addEventListener("click", e => {
+  const a = e.target.closest("[data-goto]");
+  if (a) { e.preventDefault(); select(a.dataset.goto); }
+});
+svg.addEventListener("click", () => select(null));
+
+function routeFromHash() {
+  const m = /^#\/person\/(.+)$/.exec(location.hash || "");
+  if (m && byId.has(decodeURIComponent(m[1]))) select(decodeURIComponent(m[1]), false);
+  else select(null, false);
+}
+addEventListener("hashchange", routeFromHash);
+
+/* ---------- search ---------- */
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  if (selected) select(null);
+  nodeEls.forEach(({ g, n }) =>
+    g.classList.toggle("dim", !!q && !(n.name.toLowerCase().includes(q) || (n.telugu || "").includes(q))));
+});
+
+/* ---------- legend ---------- */
+function drawLegend() {
+  const el = document.getElementById("legend");
+  el.innerHTML = colorBy === "sex"
+    ? `<span><i class="m"></i>Male</span><span><i class="f"></i>Female</span>`
+      + `<span style="color:var(--text-muted)">Greyed name = deceased</span>`
+      + `<span style="color:var(--text-muted)">Dashed = partners</span>`
+    : LINEAGES.map((l, i) => `<span><i class="l-${i}"></i>${l}</span>`).join("");
+}
+document.getElementById("colorBy").addEventListener("change", e => { colorBy = e.target.value; paint(); drawLegend(); });
+document.getElementById("fitBtn").addEventListener("click", fit);
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  paint(); drawLegend(); if (selected) select(selected, false);
+});
+
+/* ---------- table ---------- */
+function drawTable() {
+  const rows = [...nodes].sort((a, b) => a.gen - b.gen || a.name.localeCompare(b.name));
+  document.getElementById("tableView").innerHTML =
+    `<table><thead><tr><th>Gen</th><th>Name</th><th>Telugu</th><th>Born</th><th>Died</th>
+     <th>Lineage</th><th>Flags</th></tr></thead><tbody>`
+    + rows.map(d => `<tr data-goto="${d.id}"><td>${d.gen + 1}</td>`
+      + `<td class="${d.deceased ? "gone" : ""}">${esc(d.name)}</td><td>${esc(d.telugu)}</td>`
+      + `<td>${esc(d.birth)}</td><td>${esc(d.deceased ? (d.death || "yes") : "")}</td><td>${esc(d.lineage)}</td>`
+      + `<td>${d.confidence !== "high" ? '<span class="badge warn">unverified</span>' : ""}`
+      + `${d.redacted ? '<span class="badge">withheld</span>' : ""}</td></tr>`).join("")
+    + `</tbody></table>`;
+}
+document.getElementById("tableView").addEventListener("click", e => {
+  const tr = e.target.closest("[data-goto]");
+  if (tr) { document.getElementById("viewBtn").click(); select(tr.dataset.goto); }
+});
+document.getElementById("viewBtn").addEventListener("click", e => {
+  const show = e.target.getAttribute("aria-pressed") === "false";
+  e.target.setAttribute("aria-pressed", String(show));
+  e.target.textContent = show ? "Graph" : "Table";
+  document.getElementById("graph").style.display = show ? "none" : "";
+  panel.style.display = show ? "none" : "";
+  document.getElementById("tableView").style.display = show ? "block" : "none";
+  if (show) drawTable();
+});
+
+/* ---------- size ---------- */
+function resize() {
+  const r = document.getElementById("graph").getBoundingClientRect();
+  W = r.width; H = r.height;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  alpha = Math.max(alpha, 0.5);
+}
+new ResizeObserver(resize).observe(document.getElementById("graph"));
+resize(); paint(); drawLegend(); panel.innerHTML = HINT; routeFromHash();
+</script>
+</body>
+</html>
